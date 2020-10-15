@@ -1,0 +1,28 @@
+server:
+#  port: 443
+  tomcat:
+    uri-encoding: UTF-8
+
+  servlet:
+    context-path: /nqs-web
+  port: 80
+  #  ssl:
+  #    key-store: server.keystore
+  #    key-alias: tomcat
+  #    enabled: true
+  #    key-store-password: 123456
+  #    key-store-type: JKS
+# Spring
+spring:
+
+  freemarker:
+    suffix: .html
+    request-context-attribute: request
+
+#小程序ID
+wx:
+  appId: wx7cc5ee31f6e313e7
+#小程序密钥
+  secret: d72c5783284ee771e7175087264065cf
+#获取Web_access_tokenhttps的请求地址
+  webAccessTokenhttps: https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code

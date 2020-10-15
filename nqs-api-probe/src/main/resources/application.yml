@@ -1,0 +1,78 @@
+server:
+  port: 1001
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://121.37.141.206:3306/nqs-base?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: sun
+    password: sjybby273514
+    hikari:
+      minimum-idle: 5
+      idle-timeout: 6000000
+      maximum-pool-size: 10
+      auto-commit: true
+      pool-name: MyHikariCP
+      max-lifetime: 1800000
+      connection-test-query: select 1
+      connection-timeout: 3000
+  application:
+    name: service-probe
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 121.37.141.206:8848
+    sentinel:
+      transport:
+        dashboard: 121.37.141.206:8080
+        port: 8720
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+feign:
+  sentinel:
+    enabled: true # 激活Sentinel对Feign的支持
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/probe/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.acsno.common.entity
+  global-config:
+    #数据库相关配置
+    db-config:
+      #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: AUTO
+      #字段策略 IGNORED:"忽略判断",NOT_NULL:"非 NULL 判断"),NOT_EMPTY:"非空判断"
+      field-strategy: NOT_NULL
+      #驼峰下划线转换
+      column-underline: true
+      logic-delete-value: -1
+      logic-not-delete-value: 0
+    banner: false
+  #原生配置
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+
+#spring:
+#  application:
+#    name:  nqs-api-pdc
+#service:
+#  port: 8080
+#dubbo:
+#  registry:
+#    address: nacos://121.37.141.206:8848
+#  application:
+#    name: nqs-api-pdc
+#  protocol:
+#    name: dubbo
+#    port: 20880
+#  scan:
+#    # 这个属性必须有,代表被扫描暴露服务的包
+
+#    base-packages: com.acsno.pdc.service

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.acsno.common.dao.RoleDao">
+
+
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="string">
+        SELECT re.auth_signs  FROM  t_pdc_role ro
+			LEFT JOIN t_pdc_role_resource rr ON rr.role_id =ro.id
+			LEFT JOIN t_pdc_resource re ON re.id=rr.resource_id
+		    where ro.id = #{roleId}
+	</select>
+
+    <!--&lt;!&ndash; 查询用户的所有权限 &ndash;&gt;-->
+    <!--<select id="queryAllPerms" resultType="string">-->
+		<!--select m.perms from sys_user_role ur -->
+			<!--LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id -->
+			<!--LEFT JOIN sys_menu m on rm.menu_id = m.menu_id -->
+		<!--where ur.user_id = #{userId}-->
+	<!--</select>-->
+
+    <!--&lt;!&ndash; 查询用户的所有菜单ID &ndash;&gt;-->
+    <!--<select id="queryAllMenuId" resultType="long">-->
+		<!--select distinct rm.menu_id from sys_user_role ur -->
+			<!--LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id -->
+		<!--where ur.user_id = #{userId}-->
+	<!--</select>-->
+
+    <!--<select id="wxSync" resultType="sjy.jiahe.entity.SysUserEntity">-->
+		<!--select u.* from sys_user  u inner join sys_wx_user w-->
+		<!--on w.user_id=u.user_id where w.open_id=#{openId} AND w.flag_id=0-->
+	<!--</select>-->
+
+
+</mapper>
