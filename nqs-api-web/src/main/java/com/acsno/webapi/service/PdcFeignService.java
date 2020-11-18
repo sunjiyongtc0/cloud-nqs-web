@@ -27,4 +27,7 @@ public interface PdcFeignService {
 
     @GetMapping("/userInfo/getInfoByUserName/{userName}")
     UserDto getInfoByUserName(@PathVariable("userName") String userName);
+
+    @GetMapping("/resourceInfo/queryRootByRole/{id}")
+    Ret getResList(@PathVariable("id") long id);
 }

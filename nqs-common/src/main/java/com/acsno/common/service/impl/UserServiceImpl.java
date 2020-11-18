@@ -8,6 +8,7 @@ import com.acsno.common.service.UserService;
 import com.acsno.common.util.SnowflakeConfig;
 import com.acsno.ext.dto.UserDto;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

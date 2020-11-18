@@ -53,17 +53,22 @@ public class LoginController {
 
     @ResponseBody
     @PostMapping("/into")
-    public Ret Into(String userName,String userPass,String type){
-        System.out.println(userName+"------------"+userPass);
+    public Ret Into(String userName,String userPass,String type,String captcha){
         try{
             Subject subject = ShiroUtils.getSubject();
-//            if("1".equals(type)){
-//                UsernamePasswordToken token = new UsernamePasswordToken("1", "2");
-//                subject.login(token);
-//                return Ret.ok();
-//            }
-            UsernamePasswordToken token = new UsernamePasswordToken(userName, userPass);
-            subject.login(token);
+            //游客模式
+            if("1".equals(type)){
+                UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
+                subject.login(token);
+            }else {
+                //判断验证码是否正确
+                String kaptcha = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+                if (!captcha.equals(kaptcha)) {
+                    return Ret.fail("msg", "验证码不正确！");
+                }
+                UsernamePasswordToken token = new UsernamePasswordToken(userName, userPass);
+                subject.login(token);
+            }
         }catch (UnknownAccountException e) {
             return Ret.fail("msg",e.getMessage());
         }catch (IncorrectCredentialsException e) {

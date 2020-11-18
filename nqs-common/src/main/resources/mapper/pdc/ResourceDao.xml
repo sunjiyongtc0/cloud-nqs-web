@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.acsno.common.dao.ResourceDao">
+
+
+    <!-- 查询角色跟资源 -->
+    <select id="queryRootByRole" resultType="com.acsno.common.entity.ResourceEntity">
+        SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr
+		ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid='0'  ORDER BY  res_order
+	</select>
+
+    <!-- 查询角色二级三级资源 -->
+    <select id="queryTreeByRole" resultType="com.acsno.common.entity.ResourceEntity">
+        SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr
+		ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid= #{resId}  ORDER BY  res_order
+	</select>
+
+
+</mapper>

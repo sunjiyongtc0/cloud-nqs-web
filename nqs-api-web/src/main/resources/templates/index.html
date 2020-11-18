@@ -34,14 +34,14 @@
     }
 
     .user-avatar{
-        vertical-align: middle;
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        vertical-align: middle !important;
+        cursor: pointer !important;
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 10px !important;
     }
     .el-menu-vertical:not(.el-menu--collapse) {
-        background-color: #484d5e !important;
+        background-color: #51576d !important;
         color: #fff;
         text-align: center;
         line-height: 30px;
@@ -51,15 +51,18 @@
     }
 
     .el-submenu__title ,.el-menu-item {
-        background-color: #484d5e !important;
+        background-color: #4979ff !important;
         color: #fff !important;
     }
     .is-active{
-        background-color: #51576d !important;
+        background-color: #ffffff !important;
+        color: #4979ff !important;
     }
     .el-menu-vertical{
-        background-color: #484d5e !important;
+        background-color: #4979ff !important;
     }
+    .el-menu{
+        background-color:#4979ff !important;
     }
 </style>
 <body>
@@ -68,16 +71,22 @@
     <el-container>
         <el-header>
             <el-row :gutter="20">
-                <el-col :span="4" > <h2>NQS 基础项目</h2></el-col>
-                <el-col :span="3"  align="left">
-                    <h2>
-                        <el-radio-group v-model="isCollapse" style="margin-bottom: 10px;">
-                            <el-radio-button :label="false">展开</el-radio-button>
-                            <el-radio-button :label="true">收起</el-radio-button>
-                        </el-radio-group>
-                    </h2>
+                <el-col :span="4" > <h3>NQS 基础项目</h3></el-col>
+                <el-col :span="16"  align="left">
+                    <el-menu
+                            :default-active="activeIndex2"
+                            mode="horizontal"
+                            @select="handleSelect"
+                            background-color="#4979ff"
+                            text-color="#fff"
+                            active-text-color="#ffffff"
+                            >
+                        <el-menu-item  v-for=" (r,i) in res"  :key="r.id" :index="r.id+'-'+r.resUrl">
+                            {{r.resName}}
+                        </el-menu-item >
+                    </el-menu>
                 </el-col>
-                <el-col :span="4"  :offset="12" align="right" style="vertical-align:middle;">
+                <el-col :span="4"  align="right" style="vertical-align:middle;">
                     <h2>
                         <el-dropdown>
                             <img  :src="src" class="user-avatar" >
@@ -94,63 +103,45 @@
         </el-header>
 
         <el-container>
-                <el-menu default-active="1" class="el-menu-vertical" @open="handleOpen" @close="handleClose"
-                         @select="handleSelect"
-                         :collapse="isCollapse"
-                         background-color="#ccec6c"
-                         text-color="#000"
-                         active-text-color="#545c64">
-                    <el-menu-item index="1" >
-                            <i class="el-icon-menu"></i>
-                            <span slot="title">首页概述</span>
-                        </el-menu-item>
+            <div v-if="flag">
+                <el-menu
+                        default-active="2"
+                        :collapse="isCollapse"
+                        @open="handleOpen"
+                        @close="handleClose"
+                        background-color="#545c64"
+                        text-color="#fff"
+                        active-text-color="#ffd04b" >
+
+                    <el-menu-item index="1">
+                        <i class="el-icon-setting"></i>
+                        <span slot="title">探针列表</span>
+                    </el-menu-item>
                     <el-menu-item index="2">
-                        <i class="el-icon-files"></i>
-                        <span slot="title">探针管理</span>
+                        <i class="el-icon-setting"></i>
+                        <span slot="title">探针配置管理</span>
                     </el-menu-item>
-                    <el-menu-item index="3">
-                        <i class="el-icon-document"></i>
-                        <span slot="title">任务管理</span>
-                    </el-menu-item>
-                    <!--<el-menu-item index="4" >-->
-                        <!--<i class="el-icon-user-solid"></i>-->
-                        <!--<span slot="title">个人/中心</span>-->
-                    <!--</el-menu-item>-->
-                    <!--<el-menu-item index="5" >-->
-                        <!--<i class="el-icon-s-claim"></i>-->
-                        <!--<span slot="title">订单/支付</span>-->
-                    <!--</el-menu-item>-->
-                    <!--<el-submenu index="5">-->
-                        <!--<template slot="title">-->
-                            <!--<i class="el-icon-s-claim"></i>-->
-                            <!--<span>订单/支付</span>-->
-                        <!--</template>-->
-                        <!--<el-menu-item-group>-->
-                            <!--<el-menu-item index="5-1">订单管理</el-menu-item>-->
-                            <!--<el-menu-item index="5-2">订单统计</el-menu-item>-->
-                            <!--<el-menu-item index="5-3">订单趋势</el-menu-item>-->
-                        <!--</el-menu-item-group>-->
 
-                    <!--</el-submenu>-->
 
-                    <el-submenu index="6">
+                    <el-submenu index="3">
                         <template slot="title">
                             <i class="el-icon-location"></i>
-                            <span>系统管理</span>
+                            <span>探针升级</span>
                         </template>
-                        <el-menu-item-group>
-                            <template slot="title">权限管理</template>
-                            <el-menu-item index="6-1">用户管理</el-menu-item>
-                            <el-menu-item index="6-2">角色管理</el-menu-item>
-                            <el-menu-item index="6-3">部门管理</el-menu-item>
-                        </el-menu-item-group>
-                        <el-menu-item-group>
-                            <template slot="title">日志管理</template>
-                            <el-menu-item index="6-4">登录/操作</el-menu-item>
-                        </el-menu-item-group>
-                    </el-submenu>
-                </el-menu>
+                        <el-submenu index="1-4">
+                            <template slot="title">探针升级配置</template>
+                            <el-menu-item index="1-4-1">版本控制</el-menu-item>
+                            <el-menu-item index="1-4-2">升级版管理</el-menu-item>
+                            <el-menu-item index="1-4-3">app升级</el-menu-item>
+                        </el-submenu>
 
+                    </el-submenu>
+                    <el-radio-group v-model="isCollapse" style="margin-bottom: 10px;">
+                        <el-radio-button :label="false">展开</el-radio-button>
+                        <el-radio-button :label="true">收起</el-radio-button>
+                    </el-radio-group>
+                </el-menu>
+            </div>
             <el-container>
                 <el-main>
                     <section style="height: 600px;">
@@ -166,6 +157,10 @@
     var vm = new Vue({
         el: '#app',
         data:{
+            res:[],
+            activeIndex: '1',
+            activeIndex2: '1',
+            flag:false,
             dataList:['home.html','probe.html','task.html','info.html/-1','payment.html','user.html'],
             username:"游客",
             src:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80',
@@ -173,6 +168,17 @@
             index:'home.html',
         },
         methods: {
+            init(){//初始化数据
+                var that=this;
+                $.ajax({
+                    type: "GET",
+                    url: "/home/findRoot",
+                    dataType: "json",
+                    success: function (result) {
+                        that.res=result.res;
+                    }
+                });
+            },
             jump(data){
                 if(data==0){
                     this.index='info.html/-1';
@@ -195,32 +201,44 @@
                 console.log(key, keyPath);
             },
             handleSelect(key, keyPath) {
-                console.log(key, keyPath);
-                if(keyPath.length>1){
-                    if("6-1"==key){
-                        this.index = 'userList.html';
-                    }else if("6-2"==key){
-                        this.index = 'roleList.html';
-                    }else if("6-3"==key){
-                        this.index = 'deptList.html';
-                    }else if("6-4"==key){
-                        this.index = 'logList.html';
-                    }else if("5-1"==key){
-                        this.index = 'payment.html';
-                    }else if("5-2"==key){
-                        this.index = 'payshow.html';
-                    }else if("5-3"==key){
-                        this.index = 'payline.html';
-                    }
-                }else {
-                    this.index = this.dataList[key - 1];
+                console.log(key)
+                if(key.indexOf("#")!=-1){
+                    this.flag=true;
+                    console.log(key.split("-")[0])
+
+                }else{
+                    this.flag=false;
+                    console.log(key.split("-")[1])
+                    this.index='home.html';
                 }
+                // console.log(key, keyPath);
+                // if(keyPath.length>1){
+                //     if("6-1"==key){
+                //         this.index = 'userList.html';
+                //     }else if("6-2"==key){
+                //         this.index = 'roleList.html';
+                //     }else if("6-3"==key){
+                //         this.index = 'deptList.html';
+                //     }else if("6-4"==key){
+                //         this.index = 'logList.html';
+                //     }else if("5-1"==key){
+                //         this.index = 'payment.html';
+                //     }else if("5-2"==key){
+                //         this.index = 'payshow.html';
+                //     }else if("5-3"==key){
+                //         this.index = 'payline.html';
+                //     }
+                // }else {
+                //     this.index = this.dataList[key - 1];
+                // }
 
             }
         },
         created(){
             let uname=$("#use").val();
             this.username=uname!=""&&uname!=null?uname:"游客";
+            this.init();
+
         }
     });
 
