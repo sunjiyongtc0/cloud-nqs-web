@@ -32,13 +32,12 @@
 </style>
 <body>
     <div id="mapp">
-        <input type="hidden" id="roleId" value="${roleId}">
         <el-row :gutter="20">
             <el-col :span="6" :offset="6">
-                <el-button type="primary" icon="el-icon-back" @click="backRole()">返回</el-button>
+                <el-button type="primary" icon="el-icon-back" @click="backRole()" disabled >删除</el-button>
             </el-col>
             <el-col :span="6" :offset="6">
-                <el-button type="primary" icon="el-icon-check" @click="saveRes()">保存</el-button>
+                <el-button type="primary" icon="el-icon-check" @click="saveRes()">新建</el-button>
             </el-col>
         </el-row>
 
@@ -46,10 +45,12 @@
                 placeholder="输入关键字进行过滤"
                 v-model="filterText">
         </el-input>
-
+        <el-row :gutter="20">
+            <el-col :span="8" >
+                <div class="block">
         <div class="custom-tree-container">
-            <div class="block">
-                <p>角色资源树</p>
+            <div style="height: 80vh;overflow:auto">
+                <p>系统资源树</p>
                 <el-tree
                         class="filter-tree"
                         :data="data"
@@ -60,24 +61,44 @@
                         v-loading="loading"
                         node-key="id"
                         default-expand-all
-                        :expand-on-click-node="false">
-      <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ node.label }}</span>
-        <span>
-            <el-checkbox-group  v-model="data.authSigns"  @change="changeNode(node,data)">
-                <el-checkbox label="look" ></el-checkbox>
-                <el-checkbox label="update" ></el-checkbox>
-                <el-checkbox label="operation" ></el-checkbox>
-            </el-checkbox-group>
-        </span>
+                        :expand-on-click-node="false"
+                       >
+      <span class="custom-tree-node" slot-scope="{ node, data }" >
+        <span  @click="changeNode(node,data)">{{ node.label }}</span>
       </span>
                 </el-tree>
             </div>
         </div>
+                </div>
+            </el-col>
+            <el-col :span="16" >
+                <div >
+                <el-form ref="form" :model="form" label-width="80px">
+                    <el-form-item label="资源ID">
+                        <el-input v-model="form.resId" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item label="资源名称">
+                        <el-input v-model="form.resName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="父节点">
+                        <el-input v-model="form.resPid"></el-input>
+                    </el-form-item>
+                    <el-form-item label="资源url">
+                        <el-input v-model="form.resUrl"></el-input>
+                    </el-form-item>
+                    <el-form-item label="资源排序">
+                        <el-input v-model="form.resOrder"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">立即保存</el-button>
+                        <el-button>取消</el-button>
+                    </el-form-item>
+                </el-form>
+                </div>
 
 
-
-
+            </el-col>
+        </el-row>
     </div>
 
 
@@ -93,58 +114,57 @@
             defaultProps: {
                 children: 'children',
                 label: 'resName'
+            },
+            form:{
+                resId:'',
+                resName:'',
+                resPid:'',
+                resUrl:''
             }
         },
         methods: {
             init(){
                 let that=this;
-                let roleId=$("#roleId").val();
-                console.log(roleId)
                 $.ajax({
                     type: "Post",
                     url: "/role/getResTree",
-                    data:{"roleId":roleId},
+                    data:{"roleId":1},
                     dataType: "json",
                     success: function (result) {
                         that.data=result.res;
                         that.loading=false;
-                        console.log(result)
                     }
                 });
-            },
-            backRole(){
-                location.href ='/role/index';
             },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.resName.indexOf(value) !== -1;
             },
             changeNode(node,data){
-                if(data!=null&&data.authSigns.length>0){
-                    if(node.parent!=null) {
-                        var a=node.parent.data.authSigns ;
-                        var b= data.authSigns;
-                        //取两个数组的并集放入父节点中
-                        node.parent.data.authSigns=a.concat(b.filter(function(v){ return !(a.indexOf(v) > -1)}));
-                        this.changeNode(node.parent, node.parent.data)
-                    }
-                }
+                this.form=data;
             },
-            saveRes(){
+            onSubmit(){
                 var that=this;
-                let roleId=$("#roleId").val();
-                var jo=takeNotNullJson(that.data);
                 $.ajax({
                     type: "Post",
-                    url: "/role/saveResTree",
-                    data:{"roleId":roleId,"data":JSON.stringify(jo)},
+                    url: "/res/saveResNode",
+                    data:{"data":JSON.stringify(that.form)},
                     dataType: "json",
                     success: function (result) {
                         if(result.state=='ok'){
-                           that.backRole();
+                           // that.backRole();
                         }
                     }
                 });
+            },
+            saveRes(){
+                var that=this;
+                that.form={
+                        resId:'',
+                        resName:'',
+                        resPid:'',
+                        resUrl:''
+                    }
             }
         },
         watch: {
@@ -157,41 +177,7 @@
         }
     })
 
-    function takeNotNullJson(val){
-        var j=[];
-        for(var i=0;i<val.length;i++){
-            var j0=val[i];
-            var authSigns=j0.authSigns;
-            if(authSigns.length>=1){
-                var ja1=j0.children;
-                if(ja1!=null &&ja1.length>0){
-                    takeJsonFormArray(j ,takeNotNullJson(ja1));
-                }
-                delete j0.children;
-                j0.authSigns=authSigns.toString();
-                j.push(j0);
-            }
-        }
-        return j;
-    }
-    function takeJsonFormArray( j0,val){
-        if(val.length>=1){
-            for(var m=0;m<val.length;m++) {
-                var j2=val[m];
-                var authSigns=j2.authSigns;
-                if(j2.hasOwnProperty("children")){
-                    var ja2=j2.children;
-                    if(ja2.length>0){
-                        takeJsonFormArray(j0,takeNotNullJson(ja2));
-                    }
-                }
-                delete j2.children;
-                j2.authSigns=authSigns.toString();
-                j0.push(j2);
-            }
-        }
-        return j0;
-    }
+
 
 
 </script>

@@ -1,12 +1,16 @@
 package com.acsno.pdc.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.acsno.common.entity.RoleEntity;
+import com.acsno.common.entity.RoleResourceEntity;
 import com.acsno.common.entity.UserEntity;
+import com.acsno.common.service.RoleResourceService;
 import com.acsno.common.service.RoleService;
 import com.acsno.common.service.UserService;
 import com.acsno.ext.kit.Ret;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +30,9 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private RoleResourceService roleResService;
 
     /**
      * 新建修改角色
@@ -76,4 +83,25 @@ public class RoleController {
         return  ls;
     }
 
+    /**
+     * 保存角色的权限信息
+     * */
+    @PostMapping("/saveResArray")
+    public Ret saveResArray(long roleId, String data){
+        JSONArray ja = JSON.parseArray(data);
+        for(int i=0;i<ja.size();i++){
+            JSONObject j=ja.getJSONObject(i);
+            RoleResourceEntity rr=new RoleResourceEntity();
+            rr.setAuthSigns(j.getString("authSigns"));
+            rr.setRoleId(roleId+"");
+            rr.setResourceId(j.getString("resId"));
+            if(StrUtil.isNotBlank(j.getString("rrId"))){
+                rr.setId(j.getLong("rrId"));
+                roleResService.updateById(rr);
+            }else{
+                roleResService.save(rr);
+            }
+        }
+        return  Ret.ok();
+    }
 }

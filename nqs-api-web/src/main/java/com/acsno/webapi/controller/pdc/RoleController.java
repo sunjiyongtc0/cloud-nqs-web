@@ -1,10 +1,8 @@
 package com.acsno.webapi.controller.pdc;
 
 
-import com.acsno.ext.dto.UserDto;
 import com.acsno.ext.kit.Ret;
 import com.acsno.webapi.service.PdcFeignService;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +56,19 @@ public class RoleController {
     @ResponseBody
     @PostMapping("/getResTree")
     public Ret getResTree(long roleId){
-        System.out.println(roleId);
-        return roleFeignService.getResTreeList(1,"0");
+        return roleFeignService.getResTreeList(roleId,"0");
     }
+
+
+    /**
+     * 保存角色资源树配置
+     * */
+    @ResponseBody
+    @PostMapping("/saveResTree")
+    public Ret saveResTree(long roleId, String data){
+        roleFeignService.saveResArray(roleId, data);
+        return Ret.ok();
+    }
+
+
 }

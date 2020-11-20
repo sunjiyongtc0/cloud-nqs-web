@@ -30,7 +30,6 @@ public class ResourceEntity implements Serializable {
      *资源url
      */
     private String  resUrl;
-
     /**
      * 资源顺序
      */
@@ -45,4 +44,17 @@ public class ResourceEntity implements Serializable {
      * 权限关键字
      * */
     private String authSigns;
+
+    @Override
+    public String toString() {
+        return "ResourceEntity{" +
+                "id=" + id +
+                ", resId='" + resId + '\'' +
+                ", resName='" + resName + '\'' +
+                ", resUrl='" + resUrl + '\'' +
+                ", resOrder=" + resOrder +
+                ", resPid='" + resPid + '\'' +
+                ", authSigns='" + authSigns + '\'' +
+                '}';
+    }
 }

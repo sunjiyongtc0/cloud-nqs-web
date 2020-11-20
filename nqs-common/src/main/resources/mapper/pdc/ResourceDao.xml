@@ -7,14 +7,21 @@
     <!-- 查询角色跟资源 -->
     <select id="queryRootByRole" resultType="com.acsno.common.entity.ResourceEntity">
         SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr
-		ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid='0'  ORDER BY  res_order
+ 		ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid='0'  ORDER BY  res_order
 	</select>
 
-    <!-- 查询角色二级三级资源 -->
-    <select id="queryTreeByRole" resultType="com.acsno.common.entity.ResourceEntity">
-        SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr
-		ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid= #{resId}  ORDER BY  res_order
-	</select>
+    <!--&lt;!&ndash; 查询角色二级三级资源 &ndash;&gt;-->
+    <!--<select id="queryTreeByRole" resultType="com.acsno.common.entity.ResourceEntity">-->
+        <!--SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr-->
+		<!--ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid= #{resId}  ORDER BY  res_order-->
+	<!--</select>-->
 
+    <!-- 角色资源树权限 -->
+    <select id="queryTreeByRole" resultType="com.acsno.ext.dto.RoleResDto">
+          SELECT   r.id,r.res_id,r.res_name,r.res_url,r.res_pid,r.res_order,r.res_order ,rr.auth_signs ,rr.id as rr_id
+	      FROM  t_pdc_resource r  LEFT JOIN  ( SELECT id,resource_id,auth_signs FROM  t_pdc_role_resource WHERE role_id=#{roleId} ) rr ON r.res_id=rr.resource_id
+	      ORDER BY r.res_order
+
+    </select>
 
 </mapper>

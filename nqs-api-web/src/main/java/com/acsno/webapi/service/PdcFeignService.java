@@ -38,4 +38,10 @@ public interface PdcFeignService {
 
     @GetMapping("/resourceInfo/queryTreeByRole")
     Ret getResTreeList(@RequestParam("roleId") long roleId, @RequestParam("resId") String resId);
+
+    @PostMapping("/roleInfo/saveResArray")
+    Ret saveResArray(@RequestParam("roleId") long roleId,@RequestParam("data")  String data);
+
+    @PostMapping("/resourceInfo/saveRes")
+    Ret saveResNode(@RequestParam("data")  String data);
 }

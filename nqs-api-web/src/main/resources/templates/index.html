@@ -81,7 +81,7 @@
                             text-color="#fff"
                             active-text-color="#ffffff"
                             >
-                        <el-menu-item  v-for=" (r,i) in res"  :key="r.id" :index="r.resId+'-'+r.resUrl">
+                        <el-menu-item  v-for=" (r,i) in res"  :key="r.id" :index="i+'-'+r.resUrl">
                             {{r.resName}}
                         </el-menu-item >
                     </el-menu>
@@ -124,7 +124,7 @@
                             </template>
                             <el-submenu :index="rc.resId+'-'+rc.resUrl" >
                                 <template slot="title">{{rc.resName}}配置</template>
-                                <el-menu-item  v-for=" (c,i) in rc.child"  :key="c.id" :index="c.resUrl" >{{c.resName}}</el-menu-item>
+                                <el-menu-item  v-for=" (c,i) in rc.children"  :key="c.id" :index="c.resUrl" >{{c.resName}}</el-menu-item>
                             </el-submenu>
 
                         </el-submenu>
@@ -198,19 +198,9 @@
                 if(key.indexOf("#")!=-1){
                     this.flag=true;
                     var that=this;
-                    $.ajax({
-                        type: "GET",
-                        url: "/home/findTree",
-                        data: {resId:key.split("-")[0]},
-                        dataType: "json",
-                        success: function (result) {
-                            that.resChild=result.res;
-                            console.log(result)
-                        }
-                    });
+                    that.resChild=that.res[key.split("-")[0]].children;
                 }else{
                     this.flag=false;
-                    console.log(key.split("-")[1])
                     this.index='home.html';
                 }
             }
