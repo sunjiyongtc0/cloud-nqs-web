@@ -41,4 +41,8 @@ public class ResourceEntity implements Serializable {
      */
     private String  resPid;
 
+    /**
+     * 权限关键字
+     * */
+    private String authSigns;
 }

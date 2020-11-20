@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<#include "/header.html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+<style>
+    .el-carousel__item h3 {
+        color: #475669;
+        font-size: 14px;
+        opacity: 0.75;
+        line-height: 200px;
+        margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+        background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+        background-color: #d3dce6;
+    }
+</style>
+<body>
+    <div id="mapp">
+        <el-row :gutter="20" >
+            <el-col>
+                <el-button type="primary" icon="el-icon-plus" @click="dialog = true">新建</el-button>
+            </el-col>
+            <el-drawer
+                    :before-close="handleClose"
+                    :visible.sync="dialog"
+                    direction="rtl"
+                    custom-class="demo-drawer"
+                    ref="drawer"
+            >
+                <div class="demo-drawer__content">
+                    <el-form :model="form">
+                        <el-form-item label="角色名称" :label-width="formLabelWidth">
+                        <el-input v-model="form.roleName" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="角色标识" :label-width="formLabelWidth">
+                        <el-input v-model="form.roleDesc" autocomplete="off"></el-input>
+                    </el-form-item>
+                        <el-form-item label="角色状态" :label-width="formLabelWidth">
+                            <el-select v-model="form.status" placeholder="请选择角色状态">
+                                <el-option v-for="t in type "  :key="t.value"
+                                           :label="t.text"
+                                           :value="t.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                    <div class="demo-drawer__footer">
+                        <el-button @click="cancelForm">取 消</el-button>
+                        <el-button type="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+                    </div>
+                </div>
+            </el-drawer>
+
+        </el-row>
+        <el-row  :gutter="20">
+            <el-table
+                    :data="tableData.filter(data => !search || data.roleName.toLowerCase().includes(search.toLowerCase()))"
+                    border
+                    style="width: 100%">
+                <el-table-column
+                        fixed
+                        prop="roleName"
+                        label="角色名称"
+                        width="200">
+                </el-table-column>
+                <el-table-column
+                        prop="roleDesc"
+                        label="角色标识"
+                        width="200"
+                        >
+                </el-table-column>
+                <el-table-column
+                        prop="status"
+                        label="角色状态"
+                        width="200"
+                        :filters=type
+                        :formatter="formatter"
+                        :filter-method="filterHandler">
+                </el-table-column>
+                <el-table-column
+                        prop="updateTime"
+                        label="操作时间"
+                        width="200"
+                        :formatter="dateformatter">
+                </el-table-column>
+                <el-table-column
+                        align="right">
+                    <template slot="header" slot-scope="scope">
+                        <el-input
+                                v-model="search"
+                                size="mini"
+                                placeholder="输入角色名关键字搜索"/>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button
+                                size="mini"
+                                type="danger"
+                                @click="handleDeploy(scope.$index, scope.row)">权限管理</el-button>
+                        <el-button
+                                size="mini"
+                                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <el-button
+                                size="mini"
+                                @click="handleDelete(scope.$index, scope.row)" disabled>删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-row>
+    </div>
+
+
+<script>
+    var vm = new Vue({
+        el: '#mapp',
+        data:{
+            search: '',
+            tableData:[],
+            type:[{text:'启用',value:10},{text:'停用',value:20}],
+            form: {},
+            dialog: false,
+            loading: false,
+            formLabelWidth: '80px'
+        },
+        methods: {
+            init(){    //初始化数据
+                var that=this;
+                that.cancelForm();
+                $.ajax({
+                    type: "GET",
+                    url: "/role/list",
+                    dataType: "json",
+                    success: function (result) {
+                        that.tableData=result.infos;
+                        console.log(result)
+                    }
+                });
+            },
+            filterHandler(value, row, column) {
+                const status = column['status'];
+                return row[status] === value;
+            },
+            formatter(row, column){
+                var value="禁用";
+                var status = row.status;
+                for(var i=0;i<this.type.length;i++){
+                    var t=this.type[i];
+                    if(t.value==status){
+                        value=t.text;
+                    }
+                }
+                return value;
+            },
+            dateformatter(row, column){
+                var updateTime = row.updateTime;
+                return formatDate(updateTime);
+            },
+            handleDeploy(index, row){
+                location.href ='roleRes.html/'+row.id;
+            },
+            handleEdit(index, row){
+                var that=this;
+                that.dialog = true;
+                that.form=row;
+            },
+            handleDelete(index, row){
+                console.log(index,row)
+            },
+            handleClose(done) {
+                var that=this;
+                if(that.form.roleName==''){
+                    that.cancelForm()
+                }else{
+                this.$confirm('确定要添加角色吗？')
+                    .then(_ => {
+                        that.loading = true;
+                        $.ajax({
+                            type: "POST",
+                            url: "/role/add",
+                            data: that.form,
+                            dataType: "json",
+                            success: function (result) {
+                                if(result.state=='ok'){
+                                    that.cancelForm();
+                                }else{
+                                    that.$message('角色创建失败:'+result.msg);
+                                }
+
+                            }
+                        });
+
+                    })
+                    .catch(_ => {});
+                }
+            },
+            cancelForm() {
+                this.loading = false;
+                this.dialog = false;
+                this.form={
+                    id:0,
+                    roleName: '',
+                    roleDesc: '',
+                    status: ''
+                }
+            }
+        },
+        created(){
+            this.init()
+        }
+    })
+
+
+    //时间戳转换方法    date:时间戳数字
+    function formatDate(date) {
+        var date = new Date(date);
+        var YY = date.getFullYear() + '-';
+        var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+        var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+        var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+        var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+        return YY + MM + DD +" "+hh + mm + ss;
+    }
+</script>
+</body>
+</html>

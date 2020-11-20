@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<#include "/header.html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+<style>
+    .el-carousel__item h3 {
+        color: #475669;
+        font-size: 14px;
+        opacity: 0.75;
+        line-height: 200px;
+        margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+        background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+        background-color: #d3dce6;
+    }
+     .custom-tree-node {
+         flex: 1;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         font-size: 14px;
+         padding-right: 8px;
+     }
+</style>
+<body>
+    <div id="mapp">
+        <input type="hidden" id="roleId" value="${roleId}">
+        <el-row :gutter="20">
+            <el-col :span="6" :offset="6">
+                <el-button type="primary" icon="el-icon-back" @click="backRole()">返回</el-button>
+            </el-col>
+            <el-col :span="6" :offset="6">
+                <el-button type="primary" icon="el-icon-check" @click="saveRes()">保存</el-button>
+            </el-col>
+        </el-row>
+
+        <el-input
+                placeholder="输入关键字进行过滤"
+                v-model="filterText">
+        </el-input>
+
+        <div class="custom-tree-container">
+            <div class="block">
+                <p>角色资源树</p>
+                <el-tree
+                        class="filter-tree"
+                        :data="data"
+                        :props="defaultProps"
+                        default-expand-all
+                        :filter-node-method="filterNode"
+                        ref="tree"
+                        v-loading="loading"
+                        node-key="id"
+                        default-expand-all
+                        :expand-on-click-node="false">
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span>{{ node.label }}</span>
+        <span>
+            <el-checkbox-group  v-model="data.authSigns" >
+                <el-checkbox label="look" ></el-checkbox>
+                <el-checkbox label="update" ></el-checkbox>
+                <el-checkbox label="operation" ></el-checkbox>
+            </el-checkbox-group>
+        </span>
+      </span>
+                </el-tree>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+<script>
+    let id = 1000;
+    var vm = new Vue({
+        el: '#mapp',
+        data:{
+            loading:true,
+            filterText: '',
+            data :[],
+            checkedCities:[],
+            defaultProps: {
+                children: 'children',
+                label: 'resName'
+            }
+        },
+        methods: {
+            init(){
+                let that=this;
+                let roleId=$("#roleId").val();
+                console.log(roleId)
+                $.ajax({
+                    type: "Post",
+                    url: "/role/getResTree",
+                    data:{"roleId":roleId},
+                    dataType: "json",
+                    success: function (result) {
+                        that.data=result.res;
+                        that.loading=false;
+                        console.log(result)
+                    }
+                });
+            },
+            backRole(){
+                location.href ='/role/index';
+            },
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
+            },
+            saveRes(){
+                var that=this;
+                console.log(that.data)
+            }
+        },
+        watch: {
+            filterText(val) {
+                this.$refs.tree.filter(val);
+            }
+        },
+        created(){
+            this.init()
+        }
+    })
+</script>
+</body>
+</html>

@@ -10,11 +10,9 @@ import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,6 +26,27 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+
+    /**
+     * 新建修改角色
+     * */
+    @PostMapping("/add")
+    public  Ret addRole(long id,String  roleName,String roleDesc,int status){
+        if(id==0){
+            RoleEntity roleEntity=new RoleEntity();
+            roleEntity.setRoleName(roleName);   roleEntity.setRoleDesc(roleDesc);
+            roleEntity.setStatus(status);
+            roleService.saveRole(roleEntity);
+        }else{
+            RoleEntity roleEntity=new RoleEntity();
+            roleEntity.setId(id);               roleEntity.setRoleName(roleName);
+            roleEntity.setRoleDesc(roleDesc);   roleEntity.setStatus(status);
+            roleEntity.setUpdateTime(new Date().getTime());
+            roleService.updateById(roleEntity);
+        }
+        return Ret.ok();
+    }
+
 
     /**
      * 获取角色列表

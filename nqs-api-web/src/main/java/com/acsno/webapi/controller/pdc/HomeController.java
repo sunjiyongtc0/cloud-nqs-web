@@ -43,4 +43,11 @@ public class HomeController {
         UserDto userDto= (UserDto) SecurityUtils.getSubject().getPrincipal();
         return resFeignService.getResList(userDto.getRoleId());
     }
+
+    @ResponseBody
+    @GetMapping("/findTree")
+    public  Ret findTree(String resId){
+        UserDto userDto= (UserDto) SecurityUtils.getSubject().getPrincipal();
+        return resFeignService.getResTreeList(userDto.getRoleId(),resId);
+    }
 }

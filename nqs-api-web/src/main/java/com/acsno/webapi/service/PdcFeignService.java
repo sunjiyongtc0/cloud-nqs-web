@@ -6,6 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,6 +21,9 @@ public interface PdcFeignService {
     @GetMapping("/userInfo/infoById/{id}")
     Ret getUserInfoById(@PathVariable("id") long id);
 
+    @PostMapping("/roleInfo/add")
+    Ret addRole(@RequestParam("id") long id,@RequestParam("roleName") String  roleName,@RequestParam("roleDesc") String roleDesc, @RequestParam("status") int status);
+
     @GetMapping("/roleInfo/getlist")
     Ret getRoleList();
 
@@ -30,4 +35,7 @@ public interface PdcFeignService {
 
     @GetMapping("/resourceInfo/queryRootByRole/{id}")
     Ret getResList(@PathVariable("id") long id);
+
+    @GetMapping("/resourceInfo/queryTreeByRole")
+    Ret getResTreeList(@RequestParam("roleId") long roleId, @RequestParam("resId") String resId);
 }

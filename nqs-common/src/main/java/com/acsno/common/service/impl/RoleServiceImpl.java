@@ -24,6 +24,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
 	@Transactional(rollbackFor = Exception.class)
 	public boolean saveRole(RoleEntity role) {
 		role.setCreateTime(new Date().getTime());
+		role.setUpdateTime(new Date().getTime());
+		role.setDeleteFlag(0);
 		return  this.save(role);
 	}
 

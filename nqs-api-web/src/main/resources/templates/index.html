@@ -81,7 +81,7 @@
                             text-color="#fff"
                             active-text-color="#ffffff"
                             >
-                        <el-menu-item  v-for=" (r,i) in res"  :key="r.id" :index="r.id+'-'+r.resUrl">
+                        <el-menu-item  v-for=" (r,i) in res"  :key="r.id" :index="r.resId+'-'+r.resUrl">
                             {{r.resName}}
                         </el-menu-item >
                     </el-menu>
@@ -107,35 +107,29 @@
                 <el-menu
                         default-active="2"
                         :collapse="isCollapse"
-                        @open="handleOpen"
-                        @close="handleClose"
+                        @select="handleIndex"
                         background-color="#545c64"
                         text-color="#fff"
                         active-text-color="#ffd04b" >
+                    <b v-for=" (rc,i) in resChild"  :key="rc.id">
+                        <el-menu-item  v-if="rc.children.length==0" :index="rc.resUrl">
+                            <i class="el-icon-setting"></i>
+                            <span slot="title">{{rc.resName}}</span>
+                        </el-menu-item>
 
-                    <el-menu-item index="1">
-                        <i class="el-icon-setting"></i>
-                        <span slot="title">探针列表</span>
-                    </el-menu-item>
-                    <el-menu-item index="2">
-                        <i class="el-icon-setting"></i>
-                        <span slot="title">探针配置管理</span>
-                    </el-menu-item>
+                        <el-submenu v-if="rc.children.length>0" :index="rc.resId+'-'+rc.resUrl">
+                            <template slot="title">
+                                <i class="el-icon-location"></i>
+                                <span>{{rc.resName}}</span>
+                            </template>
+                            <el-submenu :index="rc.resId+'-'+rc.resUrl" >
+                                <template slot="title">{{rc.resName}}配置</template>
+                                <el-menu-item  v-for=" (c,i) in rc.child"  :key="c.id" :index="c.resUrl" >{{c.resName}}</el-menu-item>
+                            </el-submenu>
 
-
-                    <el-submenu index="3">
-                        <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span>探针升级</span>
-                        </template>
-                        <el-submenu index="1-4">
-                            <template slot="title">探针升级配置</template>
-                            <el-menu-item index="1-4-1">版本控制</el-menu-item>
-                            <el-menu-item index="1-4-2">升级版管理</el-menu-item>
-                            <el-menu-item index="1-4-3">app升级</el-menu-item>
                         </el-submenu>
+                    </b>
 
-                    </el-submenu>
                     <el-radio-group v-model="isCollapse" style="margin-bottom: 10px;">
                         <el-radio-button :label="false">展开</el-radio-button>
                         <el-radio-button :label="true">收起</el-radio-button>
@@ -144,7 +138,7 @@
             </div>
             <el-container>
                 <el-main>
-                    <section style="height: 600px;">
+                    <section style="height: 85vh;">
                         <iframe scrolling="yes" frameborder="0" style="width:100%;min-height:100%;overflow:visible;background:#fff;" :src="index"></iframe>
                     </section>
                 </el-main>
@@ -158,6 +152,7 @@
         el: '#app',
         data:{
             res:[],
+            resChild:[],
             activeIndex: '1',
             activeIndex2: '1',
             flag:false,
@@ -168,7 +163,7 @@
             index:'home.html',
         },
         methods: {
-            init(){//初始化数据
+            init(){    //初始化数据
                 var that=this;
                 $.ajax({
                     type: "GET",
@@ -176,6 +171,7 @@
                     dataType: "json",
                     success: function (result) {
                         that.res=result.res;
+                        console.log(result)
                     }
                 });
             },
@@ -194,45 +190,36 @@
                 }
 
             },
-            handleOpen(key, keyPath) {
-                console.log(key, keyPath);
+            handleIndex(key, keyPath){
+                console.log(key);
+                this.index=key;
             },
-            handleClose(key, keyPath) {
-                console.log(key, keyPath);
-            },
-            handleSelect(key, keyPath) {
-                console.log(key)
+            handleSelect(key, keyPath) { //上导航查看侧导航树
                 if(key.indexOf("#")!=-1){
                     this.flag=true;
-                    console.log(key.split("-")[0])
-
+                    var that=this;
+                    $.ajax({
+                        type: "GET",
+                        url: "/home/findTree",
+                        data: {resId:key.split("-")[0]},
+                        dataType: "json",
+                        success: function (result) {
+                            that.resChild=result.res;
+                            console.log(result)
+                        }
+                    });
                 }else{
                     this.flag=false;
                     console.log(key.split("-")[1])
                     this.index='home.html';
                 }
-                // console.log(key, keyPath);
-                // if(keyPath.length>1){
-                //     if("6-1"==key){
-                //         this.index = 'userList.html';
-                //     }else if("6-2"==key){
-                //         this.index = 'roleList.html';
-                //     }else if("6-3"==key){
-                //         this.index = 'deptList.html';
-                //     }else if("6-4"==key){
-                //         this.index = 'logList.html';
-                //     }else if("5-1"==key){
-                //         this.index = 'payment.html';
-                //     }else if("5-2"==key){
-                //         this.index = 'payshow.html';
-                //     }else if("5-3"==key){
-                //         this.index = 'payline.html';
-                //     }
-                // }else {
-                //     this.index = this.dataList[key - 1];
-                // }
-
             }
+            // handleOpen(key, keyPath) {
+            //     console.log(key, keyPath);
+            // },
+            // handleClose(key, keyPath) {
+            //     console.log(key, keyPath);
+            // },
         },
         created(){
             let uname=$("#use").val();

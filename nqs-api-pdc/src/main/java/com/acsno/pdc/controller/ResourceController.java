@@ -51,12 +51,14 @@ public class ResourceController {
         if(ls.size()>0) {
             for (ResourceEntity r : ls) {
                 JSONObject j = (JSONObject) JSON.toJSON(r);
+                j.put("authSigns",j.getString("authSigns").split(","));
                 List<ResourceEntity > ls0 = resourceService.queryTreeByRole(roleId,r.getResId());
-                j.put("child", getTree(ls0,roleId));
+                j.put("children", getTree(ls0,roleId));
                 ja.add(j);
             }
         }
         return ja ;
     }
+
 
 }
