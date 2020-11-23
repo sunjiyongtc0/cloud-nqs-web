@@ -4,6 +4,7 @@ import com.acsno.common.entity.UserEntity;
 import com.acsno.ext.dto.UserDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 
 
 public interface UserService extends IService<UserEntity> {
@@ -19,4 +20,7 @@ public interface UserService extends IService<UserEntity> {
 
 
     UserDto getInfoByUserName(String userName);
+
+    List<UserEntity> getListByGroup(long  userGroupId);
+
 }

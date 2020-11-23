@@ -88,6 +88,7 @@ public class RoleController {
      * */
     @PostMapping("/saveResArray")
     public Ret saveResArray(long roleId, String data){
+        StringBuffer sb=new StringBuffer();
         JSONArray ja = JSON.parseArray(data);
         for(int i=0;i<ja.size();i++){
             JSONObject j=ja.getJSONObject(i);
@@ -98,10 +99,17 @@ public class RoleController {
             if(StrUtil.isNotBlank(j.getString("rrId"))){
                 rr.setId(j.getLong("rrId"));
                 roleResService.updateById(rr);
+                sb.append(rr.getId()+",");
             }else{
                 roleResService.save(rr);
+                sb.append(rr.getId()+",");
             }
         }
-        return  Ret.ok();
+        if(StrUtil.isNotBlank(sb.toString())){
+            String Ids=sb.toString();
+            Ids=Ids.substring(0,Ids.length()-1);
+            roleResService.RomeByIdNotIn(roleId,Ids);
+        }
+        return  Ret.ok("Ids",sb.toString());
     }
 }

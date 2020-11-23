@@ -4,10 +4,7 @@ import com.acsno.ext.dto.UserDto;
 import com.acsno.ext.kit.Ret;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,6 +14,16 @@ public interface PdcFeignService {
 
     @GetMapping("/userInfo/getlist")
     Ret getUserList();
+
+    @GetMapping("/userInfo/getlistByGroup")
+    Ret getlistByGroup(@RequestParam("userGroupId")  long userGroupId);
+
+    @PostMapping("/userInfo/saveUser")
+    Ret saveUser(@RequestParam("data") String data);
+
+    @DeleteMapping("/userInfo/deleteUser")
+    Ret deleteUser(@RequestParam("id") long id);
+
 
     @GetMapping("/userInfo/infoById/{id}")
     Ret getUserInfoById(@PathVariable("id") long id);
@@ -44,4 +51,11 @@ public interface PdcFeignService {
 
     @PostMapping("/resourceInfo/saveRes")
     Ret saveResNode(@RequestParam("data")  String data);
+
+    @GetMapping("/treeInfo/getTree")
+    Ret getTreeListByType(@RequestParam("Type") String Type);
+
+    @PostMapping("/treeInfo/saveTreeNode")
+    Ret saveTreeNode(@RequestParam("Type") String Type ,@RequestParam("data")  String data);
+
 }

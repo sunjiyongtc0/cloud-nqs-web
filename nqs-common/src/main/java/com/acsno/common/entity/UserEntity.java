@@ -40,6 +40,12 @@ public class UserEntity implements Serializable {
     private String  userSalt;
 
     /**
+     * 性别
+     */
+    private int  sex;
+
+
+    /**
      * 邮箱
      */
     @NotBlank(message="邮箱不能为空")
@@ -55,5 +61,15 @@ public class UserEntity implements Serializable {
      * 创建时间
      * */
     private long createTime;
+
+    /**
+     * 部门ID
+     * */
+    private long orgId;
+
+    /**
+     * 角色ID
+     * */
+    private long roleId;
 
 }

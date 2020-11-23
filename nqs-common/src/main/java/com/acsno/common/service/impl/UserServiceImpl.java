@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
-
+import java.util.List;
 
 
 /**
@@ -47,5 +47,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 		return baseMapper.getInfoByUserName(userName);
 	}
 
-
+	@Transactional(rollbackFor = Exception.class)
+	public List<UserEntity> getListByGroup(long  userGroupId){
+		return baseMapper.getListByGroup(userGroupId);
+	}
 }

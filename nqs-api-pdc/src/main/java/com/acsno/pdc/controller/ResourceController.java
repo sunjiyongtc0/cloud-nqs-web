@@ -1,6 +1,5 @@
 package com.acsno.pdc.controller;
 
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.acsno.common.entity.ResourceEntity;

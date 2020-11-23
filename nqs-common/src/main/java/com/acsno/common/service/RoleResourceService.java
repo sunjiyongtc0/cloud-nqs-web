@@ -7,5 +7,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface RoleResourceService extends IService<RoleResourceEntity> {
 
 
-
+   void RomeByIdNotIn(long roleId,String Ids);
 }

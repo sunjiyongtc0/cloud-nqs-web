@@ -2,5 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.acsno.common.dao.RoleResourceDao">
-
+    <delete id="RomeByIdNotIn">
+        delete  from t_pdc_role_resource where role_id=#{roleId} and id not in (${Ids} )
+    </delete>
 </mapper>

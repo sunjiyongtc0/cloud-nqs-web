@@ -3,7 +3,11 @@ package com.acsno.webapi.controller.pdc;
 import com.acsno.ext.dto.UserDto;
 import com.acsno.ext.kit.Ret;
 import com.acsno.webapi.service.PdcFeignService;
+import com.acsno.webapi.shiro.ShiroUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +33,34 @@ public class UserController {
      * */
     @GetMapping("/list")
     @ResponseBody
-    public Ret getList(){
+    public Ret getList(long userGroupId){
+        if(userGroupId==1){
+            userGroupId=0l;
+        }
         //获取当前登录用户信息
         UserDto userDto= (UserDto) SecurityUtils.getSubject().getPrincipal();
-       return userFeignService.getUserList().set("Shiro" ,userDto);
+       return userFeignService.getlistByGroup( userGroupId ).set("Shiro" ,userDto);
     }
+
+    @PostMapping("/saveUser")
+    public Ret saveUser(@RequestParam("data") String data){
+        JSONObject j=JSON.parseObject(data);
+        //sha256加密
+		String salt = RandomStringUtils.randomAlphanumeric(20);
+        j.put("userSalt" ,salt);
+        j.put("userPass" ,ShiroUtils.sha256(j.getString("userPass"), j.getString("userSalt" )));
+        System.out.println(j);
+        return userFeignService.saveUser(j.toJSONString());
+    }
+
+    @DeleteMapping("/deleteUser")
+    public Ret deleteUser(@RequestParam("id") long id){
+        System.out.println("=====>"+id);
+        return userFeignService.deleteUser(id);
+
+    }
+
+
 
     /**
      * 根据用户id后去用户DTO信息

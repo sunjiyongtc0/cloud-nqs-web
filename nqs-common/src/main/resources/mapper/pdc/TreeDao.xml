@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.acsno.common.dao.TreeDao">
+
+
+    <!-- 根据树类型获取树表-->
+    <select id="getInfoByTreeType" resultType="com.acsno.common.entity.TreeEntity" >
+      select * from t_pdc_tree where tree_type=#{treeType}
+    </select>
+
+
+
+
+</mapper>
