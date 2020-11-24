@@ -26,19 +26,36 @@ public class ResourceController {
 
 
     /**
-     * 获取角色的资源
+     * 获取去超管角色权限
+     */
+    @PostMapping("/AdminResPerms")
+    public List<String > AdminResPerms(){
+        return resourceService.AdminResPerms();
+    }
+
+
+
+    /**
+     * 角色页面元素资源
      * */
     @GetMapping("/queryRootByRole/{id}")
     public Ret queryAllByRole(@PathVariable("id") long id){
-        List<ResourceEntity > ls = resourceService.queryRootByRole(id);
-        JSONArray ja= JSONArray.parseArray(JSON.toJSONString(ls));
+        List<RoleResDto > ls = resourceService.queryRootByRole(id);
+        JSONArray ja= new JSONArray();
+        for (int  i=0;i<ls.size();i++) {
+            RoleResDto r =ls.get(i);
+            if("0".equals(r.getResPid())){
+                JSONObject j = (JSONObject) JSON.toJSON(r);
+                j.put("children", getTree(ls,r));
+                ja.add(j);
+            }
+        }
         return Ret.ok("res",ja);
     }
 
     /**
      * 新建或者修改资源
      * */
-
     @PostMapping("/saveRes")
     public Ret saveRes(String  data){
         ResourceEntity resourceEntity=new ResourceEntity();
@@ -47,6 +64,7 @@ public class ResourceController {
         resourceEntity.setResUrl(j.getString("resUrl"));
         resourceEntity.setResPid(j.getString("resPid"));
         resourceEntity.setResOrder(j.getInteger("resOrder"));
+        resourceEntity.setMenuRemark(j.getString("menuRemark"));
         if( StrUtil.isNotBlank(j.getString("id"))&& j.getInteger("id")>=1){
             resourceEntity.setId(j.getLong("id"));
             resourceEntity.setResId(j.getString("resId"));
@@ -78,6 +96,7 @@ public class ResourceController {
         return Ret.ok("res",ja);
     }
 
+    //----------工具类，树型获取
     public JSONArray getTree(List<RoleResDto > ls ,RoleResDto r){
         JSONArray ja= new JSONArray();
         for (int  i=0;i<ls.size();i++) {

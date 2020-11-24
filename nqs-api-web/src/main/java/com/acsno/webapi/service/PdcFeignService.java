@@ -37,6 +37,10 @@ public interface PdcFeignService {
     @GetMapping("/roleInfo/queryAllPerms/{id}")
     List<String> queryAllPerms(@PathVariable("id") long id);
 
+    @PostMapping("/roleInfo/AllResPerms")
+    List<String> AllResPerms(@RequestParam("id") long id);
+
+
     @GetMapping("/userInfo/getInfoByUserName/{userName}")
     UserDto getInfoByUserName(@PathVariable("userName") String userName);
 
@@ -51,6 +55,10 @@ public interface PdcFeignService {
 
     @PostMapping("/resourceInfo/saveRes")
     Ret saveResNode(@RequestParam("data")  String data);
+
+
+    @PostMapping("/resourceInfo/AdminResPerms")
+    List<String> AdminResPerms();
 
     @GetMapping("/treeInfo/getTree")
     Ret getTreeListByType(@RequestParam("Type") String Type);

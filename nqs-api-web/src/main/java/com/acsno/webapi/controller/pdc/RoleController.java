@@ -3,6 +3,7 @@ package com.acsno.webapi.controller.pdc;
 
 import com.acsno.ext.kit.Ret;
 import com.acsno.webapi.service.PdcFeignService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class RoleController {
     @Autowired
     private PdcFeignService roleFeignService;
 
+    @RequiresPermissions("role:look")
     @RequestMapping("/index")
     public String index(){
         return "modular/pdc/role";
@@ -35,6 +37,7 @@ public class RoleController {
     /**
      * 添加角色
      * */
+    @RequiresPermissions("role:update")
     @ResponseBody
     @PostMapping("/add")
     public Ret add(long id,String  roleName,String roleDesc,int status){
@@ -44,6 +47,7 @@ public class RoleController {
     /**
      * 跳转到角色权限页面
      * */
+    @RequiresPermissions("role:operation")
     @RequestMapping(value = {"/", "roleRes.html/{roleId}"})
     public String roleRes(@PathVariable("roleId") long roleId){
         request.setAttribute("roleId",roleId);
@@ -63,6 +67,7 @@ public class RoleController {
     /**
      * 保存角色资源树配置
      * */
+    @RequiresPermissions("role:operation")
     @ResponseBody
     @PostMapping("/saveResTree")
     public Ret saveResTree(long roleId, String data){

@@ -4,17 +4,12 @@
 <mapper namespace="com.acsno.common.dao.ResourceDao">
 
 
-    <!-- 查询角色跟资源 -->
-    <select id="queryRootByRole" resultType="com.acsno.common.entity.ResourceEntity">
-        SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr
- 		ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid='0'  ORDER BY  res_order
-	</select>
-
-    <!--&lt;!&ndash; 查询角色二级三级资源 &ndash;&gt;-->
-    <!--<select id="queryTreeByRole" resultType="com.acsno.common.entity.ResourceEntity">-->
-        <!--SELECT r.* FROM  t_pdc_resource r INNER JOIN  t_pdc_role_resource rr-->
-		<!--ON r.res_id=rr.resource_id WHERE rr.role_id= #{roleId} AND r.res_pid= #{resId}  ORDER BY  res_order-->
-	<!--</select>-->
+    <!-- 角色页面元素资源 -->
+    <select id="queryRootByRole" resultType="com.acsno.ext.dto.RoleResDto">
+        SELECT r.id,r.res_id,r.res_name,r.res_url,r.res_pid,r.res_order,r.res_order,rr.id AS rr_id
+         FROM   t_pdc_resource r INNER JOIN   t_pdc_role_resource rr 	 ON r.res_id=rr.resource_id
+         WHERE rr.role_id=#{roleId}  AND FIND_IN_SET('look', rr.auth_signs) ORDER BY r.res_order
+    </select>
 
     <!-- 角色资源树权限 -->
     <select id="queryTreeByRole" resultType="com.acsno.ext.dto.RoleResDto">
@@ -22,6 +17,16 @@
 	      FROM  t_pdc_resource r  LEFT JOIN  ( SELECT id,resource_id,auth_signs FROM  t_pdc_role_resource WHERE role_id=#{roleId} ) rr ON r.res_id=rr.resource_id
 	      ORDER BY r.res_order
 
+    </select>
+
+    <!--  全部资源树权限 -->
+    <select  id="AdminResPerms" resultType="string" >
+          SELECT  CONCAT_WS("-",menu_remark,auth_signs) AS a  FROM t_pdc_resource
+    </select>
+
+    <!--  全部资源树列表 -->
+    <select  id="AllResList" resultType="com.acsno.common.entity.ResourceEntity" >
+          SELECT  id,res_id,res_name,res_url,res_pid,res_order,auth_signs  FROM t_pdc_resource order by res_order
     </select>
 
 </mapper>

@@ -12,4 +12,5 @@ public interface RoleDao extends BaseMapper<RoleEntity> {
 
     List<String> queryAllPerms(long  roleId);
 
+    List<String> AllResPerms(long  roleId);
 }

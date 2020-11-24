@@ -12,6 +12,15 @@
 		    where ro.id = #{roleId}
 	</select>
 
+	<!-- 查询角色的所有权限 -->
+	<select id="AllResPerms" resultType="string">
+       SELECT  CONCAT_WS("-",res.menu_remark,rr.auth_signs) AS a  FROM   t_pdc_role_resource rr
+       					INNER JOIN t_pdc_role r  ON r.id=rr.role_id
+				       	INNER JOIN t_pdc_resource res ON res.res_id=rr.resource_id
+				       	WHERE r.id=#{roleId}
+	</select>
+
+
     <!--&lt;!&ndash; 查询用户的所有权限 &ndash;&gt;-->
     <!--<select id="queryAllPerms" resultType="string">-->
 		<!--select m.perms from sys_user_role ur -->

@@ -89,6 +89,9 @@
                     <el-form-item label="资源排序">
                         <el-input v-model="form.resOrder"></el-input>
                     </el-form-item>
+                    <el-form-item label="权限标识">
+                        <el-input v-model="form.menuRemark"></el-input>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onSubmit">立即保存</el-button>
                         <el-button>取消</el-button>
@@ -119,7 +122,8 @@
                 resId:'',
                 resName:'',
                 resPid:'',
-                resUrl:''
+                resUrl:'',
+                menuRemark:''
             }
         },
         methods: {
@@ -163,7 +167,8 @@
                         resId:'',
                         resName:'',
                         resPid:'',
-                        resUrl:''
+                        resUrl:'',
+                        menuRemark:''
                     }
             }
         },

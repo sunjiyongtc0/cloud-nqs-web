@@ -58,6 +58,10 @@ public class LoginController {
             Subject subject = ShiroUtils.getSubject();
             //游客模式
             if("1".equals(type)){
+                UsernamePasswordToken token = new UsernamePasswordToken("asd", "asd");
+                subject.login(token);
+            //超管模式
+            }else if("2".equals(type)){
                 UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
                 subject.login(token);
             }else {

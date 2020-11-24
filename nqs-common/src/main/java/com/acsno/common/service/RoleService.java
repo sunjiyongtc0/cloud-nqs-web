@@ -16,4 +16,6 @@ public interface RoleService extends IService<RoleEntity> {
      * 获取角色的权限内容
      * */
     List<String> queryAllPerms(long  roleId);
+
+    List<String> AllResPerms(long  roleId);
 }

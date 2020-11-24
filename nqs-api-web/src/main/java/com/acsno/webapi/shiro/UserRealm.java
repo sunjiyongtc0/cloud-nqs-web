@@ -38,6 +38,8 @@ import java.util.Set;
  */
 @Component
 public class UserRealm extends AuthorizingRealm {
+	private Long SUPER_ADMIN=1l;
+
 	@Resource
 	private PdcFeignService userFeignService;
 
@@ -54,23 +56,19 @@ public class UserRealm extends AuthorizingRealm {
 		UserDto user = (UserDto)principals.getPrimaryPrincipal();
 		Long roleId = user.getRoleId();
 		List<String> permsList;
-//		//系统管理员，拥有最高权限
-////		if(userId == Constant.SUPER_ADMIN){
-////			List<SysMenuEntity> menuList = sysMenuDao.selectList(null);
-////			permsList = new ArrayList<>(menuList.size());
-////			for(SysMenuEntity menu : menuList){
-////				permsList.add(menu.getPerms());
-////			}
-////		}else{
-			permsList = userFeignService.queryAllPerms(roleId);
-////		}
+		//系统管理员，拥有最高权限
+		if(roleId == SUPER_ADMIN){
+			permsList = userFeignService.AdminResPerms();
+		}else{
+			permsList = userFeignService.AllResPerms(roleId);
+		}
 		//用户权限列表
 		Set<String> permsSet = new HashSet<>();
 		for(String perms : permsList){
 			if(StrUtil.isBlank(perms)){
 				continue;
 			}
-			permsSet.addAll(Arrays.asList(perms.trim().split(",")));
+			permsSet.add(perms);
 		}
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		info.setStringPermissions(permsSet);

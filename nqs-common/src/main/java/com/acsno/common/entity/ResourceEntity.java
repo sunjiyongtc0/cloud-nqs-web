@@ -45,6 +45,8 @@ public class ResourceEntity implements Serializable {
      * */
     private String authSigns;
 
+    private String menuRemark;
+
     @Override
     public String toString() {
         return "ResourceEntity{" +

@@ -12,7 +12,10 @@ import java.util.List;
 @Mapper
 public interface ResourceDao extends BaseMapper<ResourceEntity> {
 
-    List<ResourceEntity> queryRootByRole(long roleId);
+    List<RoleResDto> queryRootByRole(long roleId);
 
     List<RoleResDto>  queryTreeByRole(@Param("roleId") long roleId, @Param("resId") String resId);
+
+
+    List<String>  AdminResPerms();
 }

@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,5 +34,20 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
 	public List<String> queryAllPerms(long  roleId){
 		return baseMapper.queryAllPerms(roleId);
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public List<String> AllResPerms(long  roleId){
+		List<String>  l=baseMapper.AllResPerms(roleId);
+		List<String>  lnew=new ArrayList<String>();
+		for(String s:l){
+			String key=s.split("-")[0];
+			String value=s.split("-")[1];
+			for(String v:value.split(",")){
+				lnew.add(key+":"+v);
+			}
+		}
+		return lnew;
+	}
+
 
 }

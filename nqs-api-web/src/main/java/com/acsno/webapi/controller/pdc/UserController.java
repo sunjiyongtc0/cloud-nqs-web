@@ -2,6 +2,7 @@ package com.acsno.webapi.controller.pdc;
 
 import com.acsno.ext.dto.UserDto;
 import com.acsno.ext.kit.Ret;
+import com.acsno.webapi.controller.BaseController;
 import com.acsno.webapi.service.PdcFeignService;
 import com.acsno.webapi.shiro.ShiroUtils;
 import com.alibaba.fastjson.JSON;
@@ -9,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +19,12 @@ import javax.annotation.Resource;
 @Controller
 @Slf4j
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends BaseController {
 
     @Resource
     private PdcFeignService userFeignService;
 
+    @RequiresPermissions("user:look")
     @RequestMapping("/index")
     public String index(){
         return "modular/pdc/user";
@@ -31,6 +34,7 @@ public class UserController {
     /**
      * 获取用户列表
      * */
+
     @GetMapping("/list")
     @ResponseBody
     public Ret getList(long userGroupId){
@@ -41,7 +45,7 @@ public class UserController {
         UserDto userDto= (UserDto) SecurityUtils.getSubject().getPrincipal();
        return userFeignService.getlistByGroup( userGroupId ).set("Shiro" ,userDto);
     }
-
+    @RequiresPermissions("user:update")
     @PostMapping("/saveUser")
     public Ret saveUser(@RequestParam("data") String data){
         JSONObject j=JSON.parseObject(data);
@@ -52,8 +56,6 @@ public class UserController {
         System.out.println(j);
         return userFeignService.saveUser(j.toJSONString());
     }
-
-    @DeleteMapping("/deleteUser")
     public Ret deleteUser(@RequestParam("id") long id){
         System.out.println("=====>"+id);
         return userFeignService.deleteUser(id);

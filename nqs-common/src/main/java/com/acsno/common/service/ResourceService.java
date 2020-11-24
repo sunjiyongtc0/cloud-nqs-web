@@ -12,10 +12,13 @@ public interface ResourceService extends IService<ResourceEntity> {
     /**
      * 根据角色获取根资源信息
      * */
-    List<ResourceEntity> queryRootByRole(long roleId);
+    List<RoleResDto> queryRootByRole(long roleId);
 
     /**
      * 根据角色获取二三级资源信息
      * */
     List<RoleResDto> queryTreeByRole(long roleId, String resId);
+
+
+    List<String> AdminResPerms();
 }

@@ -79,9 +79,17 @@ public class RoleController {
      * */
     @GetMapping("/queryAllPerms/{id}")
     public List<String > queryAllPerms(@PathVariable("id") long id){
-        List<String > ls = roleService.queryAllPerms(id);
-        return  ls;
+        return  roleService.queryAllPerms(id);
     }
+
+
+    @PostMapping("/AllResPerms")
+    public List<String >  AllResPerms(@RequestParam("id") long id){
+        return roleService.AllResPerms(id);
+    }
+
+
+
 
     /**
      * 保存角色的权限信息
