@@ -26,7 +26,7 @@
 
     <!--  全部资源树列表 -->
     <select  id="AllResList" resultType="com.acsno.common.entity.ResourceEntity" >
-          SELECT  id,res_id,res_name,res_url,res_pid,res_order,auth_signs  FROM t_pdc_resource order by res_order
+          SELECT  id,res_id,res_name,res_url,res_pid,res_order,auth_signs,menu_remark  FROM t_pdc_resource where delete_flag=0 order by res_order
     </select>
 
 </mapper>

@@ -49,4 +49,10 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceDao, ResourceEntity
 		}
 		return lnew;
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public List<ResourceEntity>  AllResList(){
+
+		return baseMapper.AllResList();
+	}
 }

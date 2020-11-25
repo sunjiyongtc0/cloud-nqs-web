@@ -18,4 +18,6 @@ public interface ResourceDao extends BaseMapper<ResourceEntity> {
 
 
     List<String>  AdminResPerms();
+
+    List<ResourceEntity>  AllResList();
 }

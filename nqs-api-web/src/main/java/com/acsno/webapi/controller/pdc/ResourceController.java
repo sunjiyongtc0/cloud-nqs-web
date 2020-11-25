@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping("/res")
@@ -35,6 +36,12 @@ public class ResourceController {
     public Ret saveResTree(String data){
         resFeignService.saveResNode(data);
         return Ret.ok();
+    }
+
+    @GetMapping("/allResList")
+    @ResponseBody
+    public Ret ResAllResList(){
+       return resFeignService.ResAllResList();
     }
 
 }

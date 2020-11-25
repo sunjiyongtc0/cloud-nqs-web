@@ -21,4 +21,6 @@ public interface ResourceService extends IService<ResourceEntity> {
 
 
     List<String> AdminResPerms();
+
+    List<ResourceEntity>  AllResList();
 }

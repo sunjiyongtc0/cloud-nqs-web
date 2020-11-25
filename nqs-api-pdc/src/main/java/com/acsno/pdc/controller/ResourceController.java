@@ -96,6 +96,27 @@ public class ResourceController {
         return Ret.ok("res",ja);
     }
 
+    /**
+     * 获取系统资源树
+     * */
+    @GetMapping("/allResList")
+    public Ret allResList() {
+     List<ResourceEntity >  lr=  resourceService.AllResList();
+        JSONArray ja= new JSONArray();
+        for (int  i=0;i<lr.size();i++) {
+            ResourceEntity r =lr.get(i);
+            if("0".equals(r.getResPid())){
+                JSONObject j = (JSONObject) JSON.toJSON(r);
+                j.put("authSigns", StrUtil.isNotBlank(j.getString("authSigns"))?j.getString("authSigns").split(","):new JSONArray());
+                j.put("children", getTree(lr,r));
+                ja.add(j);
+            }
+        }
+        return Ret.ok("res",ja);
+
+    }
+
+
     //----------工具类，树型获取
     public JSONArray getTree(List<RoleResDto > ls ,RoleResDto r){
         JSONArray ja= new JSONArray();
@@ -105,6 +126,20 @@ public class ResourceController {
                 JSONObject jo = (JSONObject) JSON.toJSON(re);
                 jo.put("authSigns", StrUtil.isNotBlank(jo.getString("authSigns"))?jo.getString("authSigns").split(","):new JSONArray());
                 jo.put("children", getTree(ls,re));
+                ja.add(jo);
+            }
+        }
+        return ja;
+    }
+
+    public JSONArray getTree(List<ResourceEntity >  lr,ResourceEntity r ){
+        JSONArray ja= new JSONArray();
+        for (int  i=0;i<lr.size();i++) {
+            ResourceEntity re=lr.get(i);
+            if(r.getResId().equals(re.getResPid())){
+                JSONObject jo = (JSONObject) JSON.toJSON(re);
+                jo.put("authSigns", StrUtil.isNotBlank(jo.getString("authSigns"))?jo.getString("authSigns").split(","):new JSONArray());
+                jo.put("children", getTree(lr,re));
                 ja.add(jo);
             }
         }

@@ -2,6 +2,7 @@ package com.acsno.webapi.controller.pdc;
 
 import com.acsno.ext.dto.UserDto;
 import com.acsno.ext.kit.Ret;
+import com.acsno.webapi.annotation.OperLog;
 import com.acsno.webapi.service.PdcFeignService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -23,7 +24,7 @@ public class HomeController {
     private HttpServletRequest request;
     @Resource
     private PdcFeignService resFeignService;
-
+    @OperLog(logModul ="home/index",logType ="login",logDesc = "用户登录操作")
     @RequestMapping("/index")
     public  String index(){
         //获取当前登录用户信息

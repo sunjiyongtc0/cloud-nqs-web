@@ -56,14 +56,19 @@ public interface PdcFeignService {
     @PostMapping("/resourceInfo/saveRes")
     Ret saveResNode(@RequestParam("data")  String data);
 
-
     @PostMapping("/resourceInfo/AdminResPerms")
     List<String> AdminResPerms();
+
+    @GetMapping("/resourceInfo/allResList")
+    Ret ResAllResList();
 
     @GetMapping("/treeInfo/getTree")
     Ret getTreeListByType(@RequestParam("Type") String Type);
 
     @PostMapping("/treeInfo/saveTreeNode")
     Ret saveTreeNode(@RequestParam("Type") String Type ,@RequestParam("data")  String data);
+
+    @PostMapping("/logInfo/saveLog")
+    void saveLogOper(@RequestParam("data")  String data);
 
 }

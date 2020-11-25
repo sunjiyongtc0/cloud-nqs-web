@@ -2,6 +2,7 @@ package com.acsno.webapi.controller.pdc;
 
 import com.acsno.ext.dto.UserDto;
 import com.acsno.ext.kit.Ret;
+import com.acsno.webapi.annotation.OperLog;
 import com.acsno.webapi.controller.BaseController;
 import com.acsno.webapi.service.PdcFeignService;
 import com.acsno.webapi.shiro.ShiroUtils;
@@ -19,7 +20,7 @@ import javax.annotation.Resource;
 @Controller
 @Slf4j
 @RequestMapping("/user")
-public class UserController extends BaseController {
+public class UserController{
 
     @Resource
     private PdcFeignService userFeignService;
@@ -37,6 +38,7 @@ public class UserController extends BaseController {
 
     @GetMapping("/list")
     @ResponseBody
+    @OperLog(logModul ="user/list",logType = "look",logDesc = "用户列表查看")
     public Ret getList(long userGroupId){
         if(userGroupId==1){
             userGroupId=0l;

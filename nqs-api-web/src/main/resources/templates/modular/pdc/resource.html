@@ -130,9 +130,8 @@
             init(){
                 let that=this;
                 $.ajax({
-                    type: "Post",
-                    url: "/role/getResTree",
-                    data:{"roleId":1},
+                    type: "Get",
+                    url: "/res/allResList",
                     dataType: "json",
                     success: function (result) {
                         that.data=result.res;
