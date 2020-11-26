@@ -5,7 +5,6 @@ import com.acsno.ext.kit.Ret;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Component
@@ -70,5 +69,8 @@ public interface PdcFeignService {
 
     @PostMapping("/logInfo/saveLog")
     void saveLogOper(@RequestParam("data")  String data);
+
+    @GetMapping("/logInfo/getLogList")
+    Ret getLogList();
 
 }

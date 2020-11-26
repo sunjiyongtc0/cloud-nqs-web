@@ -2,12 +2,12 @@ package com.acsno.webapi.controller.pdc;
 
 
 import com.acsno.ext.kit.Ret;
+import com.acsno.webapi.annotation.OperLog;
 import com.acsno.webapi.service.PdcFeignService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -34,12 +34,10 @@ public class RoleController {
     }
 
 
-    /**
-     * 添加角色
-     * */
     @RequiresPermissions("role:update")
     @ResponseBody
     @PostMapping("/add")
+    @OperLog(logModul ="role/add",logType = "update",logDesc = "添加角色信息")
     public Ret add(long id,String  roleName,String roleDesc,int status){
         return roleFeignService.addRole(id,roleName,roleDesc,status);
     }
@@ -64,12 +62,11 @@ public class RoleController {
     }
 
 
-    /**
-     * 保存角色资源树配置
-     * */
+
     @RequiresPermissions("role:operation")
     @ResponseBody
     @PostMapping("/saveResTree")
+    @OperLog(logModul ="role/saveResTree",logType = "operation",logDesc = "保存角色资源树配置")
     public Ret saveResTree(long roleId, String data){
         roleFeignService.saveResArray(roleId, data);
         return Ret.ok();

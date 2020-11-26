@@ -3,4 +3,8 @@
 
 <mapper namespace="com.acsno.common.dao.LogDao">
 
+    <select id="findPage" resultType="com.acsno.common.entity.LogEntity">
+      select * from t_pdc_log
+   </select>
+
 </mapper>

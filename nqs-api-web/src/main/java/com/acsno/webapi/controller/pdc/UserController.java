@@ -38,7 +38,6 @@ public class UserController{
 
     @GetMapping("/list")
     @ResponseBody
-    @OperLog(logModul ="user/list",logType = "look",logDesc = "用户列表查看")
     public Ret getList(long userGroupId){
         if(userGroupId==1){
             userGroupId=0l;
@@ -47,19 +46,20 @@ public class UserController{
         UserDto userDto= (UserDto) SecurityUtils.getSubject().getPrincipal();
        return userFeignService.getlistByGroup( userGroupId ).set("Shiro" ,userDto);
     }
+
     @RequiresPermissions("user:update")
     @PostMapping("/saveUser")
+    @OperLog(logModul ="user/saveUser",logType = "update",logDesc = "用户保存")
     public Ret saveUser(@RequestParam("data") String data){
         JSONObject j=JSON.parseObject(data);
         //sha256加密
 		String salt = RandomStringUtils.randomAlphanumeric(20);
         j.put("userSalt" ,salt);
         j.put("userPass" ,ShiroUtils.sha256(j.getString("userPass"), j.getString("userSalt" )));
-        System.out.println(j);
         return userFeignService.saveUser(j.toJSONString());
     }
+
     public Ret deleteUser(@RequestParam("id") long id){
-        System.out.println("=====>"+id);
         return userFeignService.deleteUser(id);
 
     }

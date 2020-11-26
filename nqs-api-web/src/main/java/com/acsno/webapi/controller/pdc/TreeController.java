@@ -1,6 +1,7 @@
 package com.acsno.webapi.controller.pdc;
 
 import com.acsno.ext.kit.Ret;
+import com.acsno.webapi.annotation.OperLog;
 import com.acsno.webapi.service.PdcFeignService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -23,11 +24,10 @@ public class TreeController {
        return treeFeignService.getTreeListByType("user");
     }
 
-    /**
-     * 保存或修改用户树
-     * */
+
     @RequiresPermissions("tree:operation")
     @PostMapping("/saveUserNode")
+    @OperLog(logModul ="tree/saveUserNode",logType = "operation",logDesc = "保存或修改用户树")
     public Ret saveUserNode(String data){
         return treeFeignService.saveTreeNode("user",data);
     }

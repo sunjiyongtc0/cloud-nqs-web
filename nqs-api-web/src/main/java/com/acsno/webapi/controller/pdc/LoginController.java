@@ -1,6 +1,7 @@
 package com.acsno.webapi.controller.pdc;
 
 import com.acsno.ext.kit.Ret;
+import com.acsno.webapi.annotation.OperLog;
 import com.acsno.webapi.shiro.ShiroUtils;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -47,9 +47,6 @@ public class LoginController {
         ServletOutputStream out = response.getOutputStream();
         ImageIO.write(image, "jpg", out);
     }
-
-
-
 
     @ResponseBody
     @PostMapping("/into")
