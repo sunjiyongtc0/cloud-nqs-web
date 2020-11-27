@@ -1,54 +1,30 @@
 package com.acsno.common.entity;
 
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
 import java.io.Serializable;
 
 @Data
 @TableName("t_p_probe")
 public class ProbeEntity implements Serializable {
 
-    /**
-     * ID
-     */
-    @TableId
+
+//    @TableId
     private String id;
-
-    /**
-     * 探针名称
-     */
     private String probeName;
-
-    /**
-     * 探针别名
-     * */
     private String  probeAlias;
-
-    /**
-     *探针类型
-     */
     private int  type;
-
-    /**
-     * ip
-     */
     private String  ip;
-
-    /**
-     * 探针状态
-     */
+    private String  internetIp;
     private int  status;
-
-    /**
-     * 软件版本（插件）
-     */
+    private int operator;
     private String softVer;
-
-    /**
-     * 最后心跳时间（秒）
-     * */
+    private long lastRegistTime;
     private long lastHeartbeatTime;
+    private String vendor;
+    private String sn;
+    private String pc;
 
 }

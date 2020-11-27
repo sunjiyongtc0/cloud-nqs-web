@@ -23,44 +23,178 @@
     }
 </style>
 <body>
-    <div id="mapp">
-        <div v-for="item in 5" :key="item">
-         <el-row  :gutter="20" style="width: 95%;align-content: center">
-            <el-col :span="10">
-                <el-image  :src="src" lazy></el-image>
-            </el-col>
-            <el-col :span="14">
-                <el-divider direction="vertical"></el-divider>
-                <span>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </span>
-            </el-col>
-        </el-row>
-        <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
-        <el-row  :gutter="20" style="width: 95%;align-content: center" >
-            <el-col :span="14">
-                <span>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </span>
-                <el-divider direction="vertical"></el-divider>
-            </el-col>
-            <el-col :span="10">
-                <el-image  :src="src" lazy></el-image>
-            </el-col>
-        </el-row>
+<div id="mapp">
+    <el-row  :gutter="20">
+        <el-table
+                :data="tableData.filter(data => !search || data.probeAlias.toLowerCase().includes(search.toLowerCase()))"
+                border
+                style="width: 100%">
+            <el-table-column
+                    fixed
+                    prop="probeName"
+                    label="探针名称"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="probeAlias"
+                    label="探针别名"
+                    width="200"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="status"
+                    label="探针状态"
+                    width="50"
+                    :formatter="formatter"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="softVer"
+                    label="软件版本"
+                    width="100"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="type"
+                    label="探针类别"
+                    width="50"
+                    :formatter="formatter"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="lastRegistTime"
+                    label="探针注册时间"
+                    width="200"
+                    :formatter="dateformatterlastRegistTime">
+            </el-table-column>
+            <el-table-column
+                    prop="lastHeartbeatTime"
+                    label="探针最后心跳时间"
+                    width="200"
+                    :formatter="dateformatterlastHeartbeatTime">
+            </el-table-column>
+            <el-table-column
+                    align="right">
+                <template slot="header" slot-scope="scope">
+                    <el-input
+                            v-model="search"
+                            size="mini"
+                            placeholder="输入探针别名关键字搜索"/>
+                </template>
+                <template slot-scope="scope">
+                    <el-button
+                            size="mini"
+                            @click="handleEdit(scope.$index, scope.row)" disabled>查看详情</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="block">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="pageSizes"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
         </div>
-    </div>
+    </el-row>
+</div>
 
 
 <script>
-    // var pathName = document.location.href;
-    // console.log(pathName)
     var vm = new Vue({
         el: '#mapp',
         data:{
-            src:"${request.contextPath}/statics/img/bg.jpg",
+            search: '',
+            tableData:[],
+            type:[],
+            form: {},
+            dialog: false,
+            loading: false,
+            formLabelWidth: '80px',
+            pageSizes:[20,50,100,200],
+            pageSize:20,
+            total:0,
+            currentPage:0
         },
+        methods: {
+            init(){    //初始化数据
+                var that=this;
+                $.ajax({
+                    type: "GET",
+                    url: "/role/list",
+                    dataType: "json",
+                    success: function (result) {
+                        that.type=result.infos;
+                    }
+                });
+                that.initList();
+            },
+            initList(){
+                var that=this;
+                $.ajax({
+                    type: "GET",
+                    url: "/probe/getProbePage",
+                    data:{"pageSize":that.pageSize,"currentPage":that.currentPage},
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result)
+                        that.tableData=result.infos.records;
+                        that.total=result.infos.total;
+                        that.pageSize=result.infos.size;
+                        that.currentPage=result.infos.current;
+                    }
+                });
+            },
+            formatter(row, column){
+                var value="暂无角色";
+                var roleId = row.roleId;
+                for(var i=0;i<this.type.length;i++){
+                    var t=this.type[i];
+                    if(t.id==roleId){
+                        value=t.roleName;
+                    }
+                }
+                return value;
+            },
+            dateformatterlastRegistTime(row, column){
+                var lastRegistTime = row.lastRegistTime;
+                return formatDate(lastRegistTime);
+            },
+            dateformatterlastHeartbeatTime(row, column){
+                var lastHeartbeatTime = row.lastHeartbeatTime;
+                return formatDate(lastHeartbeatTime);
+            },
+            handleSizeChange(val){
+                var that=this;
+                that.pageSize=val;
+                that.initList();
+            },
+            handleCurrentChange(val){
+                var that=this;
+                that.currentPage=val;
+                that.initList();
+            }
+        },
+        created(){
+            this.init()
+        }
     })
+
+
+    //时间戳转换方法    date:时间戳数字
+    function formatDate(date) {
+        var date = new Date(date*1000);
+        var YY = date.getFullYear() + '-';
+        var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+        var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+        var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+        var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+        return YY + MM + DD +" "+hh + mm + ss;
+    }
 </script>
 </body>
 </html>

@@ -85,11 +85,11 @@
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage4"
-                        :page-sizes="[100, 200, 300, 400]"
-                        :page-size="100"
+                        :current-page="currentPage"
+                        :page-sizes="pageSizes"
+                        :page-size="pageSize"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="400">
+                        :total="total">
                 </el-pagination>
             </div>
         </el-row>
@@ -106,25 +106,37 @@
             form: {},
             dialog: false,
             loading: false,
-            formLabelWidth: '80px'
+            formLabelWidth: '80px',
+            pageSizes:[20,50,100,200],
+            pageSize:20,
+            total:0,
+            currentPage:0
         },
         methods: {
             init(){    //初始化数据
                 var that=this;
                 $.ajax({
                     type: "GET",
-                    url: "/log/list",
-                    dataType: "json",
-                    success: function (result) {
-                        that.tableData=result.infos;
-                    }
-                });
-                $.ajax({
-                    type: "GET",
                     url: "/role/list",
                     dataType: "json",
                     success: function (result) {
                         that.type=result.infos;
+                    }
+                });
+                that.initList();
+            },
+            initList(){
+                var that=this;
+                $.ajax({
+                    type: "GET",
+                    url: "/log/getLogPage",
+                    data:{"pageSize":that.pageSize,"currentPage":that.currentPage},
+                    dataType: "json",
+                    success: function (result) {
+                        that.tableData=result.infos.records;
+                        that.total=result.infos.total;
+                        that.pageSize=result.infos.size;
+                        that.currentPage=result.infos.current;
                     }
                 });
             },
@@ -143,6 +155,16 @@
                 var createTime = row.createTime;
                 return formatDate(createTime);
             },
+            handleSizeChange(val){
+                var that=this;
+                that.pageSize=val;
+                that.initList();
+            },
+            handleCurrentChange(val){
+                var that=this;
+                that.currentPage=val;
+                that.initList();
+            }
         },
         created(){
             this.init()

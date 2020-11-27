@@ -11,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-
 @RestController
 @RequestMapping("/logInfo")
 @Slf4j
@@ -42,11 +39,8 @@ public class LogController {
     }
 
     @GetMapping("/getLogPage")
-    public Ret getLogPage(){
-
-        Integer currentPage = 1; //当前页数：显示第一页数据
-        Integer pageSize = 2;    //每页显示多少：每页显示2条数据
-        Page<LogEntity> page = new Page<>(currentPage, pageSize);
+    public Ret getLogPage(@RequestParam("currentPage") long currentPage ,@RequestParam("pageSize") long pageSize ){
+        Page<LogEntity> page = new Page<>(currentPage, pageSize);//当前页数：显示第一页数据//每页显示多少：每页显示2条数据
         QueryWrapper<LogEntity> wrapper=new QueryWrapper<>();
         wrapper.setEntity(new LogEntity());
         return Ret.ok("infos",logService.findByPageService(page,wrapper));

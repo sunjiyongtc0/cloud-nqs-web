@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -29,6 +30,12 @@ public class TaskController {
     @ResponseBody
     public Ret getList(){
         return taskFeignService.getList();
+    }
+
+    @GetMapping("/getTaskPage")
+    @ResponseBody
+    public Ret getTaskPage(@RequestParam("currentPage") long currentPage , @RequestParam("pageSize") long pageSize ){
+        return taskFeignService.getTaskPage(currentPage,pageSize);
     }
 
 }

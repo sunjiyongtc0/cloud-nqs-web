@@ -73,4 +73,6 @@ public interface PdcFeignService {
     @GetMapping("/logInfo/getLogList")
     Ret getLogList();
 
+    @GetMapping("/logInfo/getLogPage")
+    Ret getLogPage(@RequestParam("currentPage") long currentPage ,@RequestParam("pageSize") long pageSize );
 }

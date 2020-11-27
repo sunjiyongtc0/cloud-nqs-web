@@ -2,5 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.acsno.common.dao.ProbeDao">
-
+    <select id="findPage" resultType="com.acsno.common.entity.ProbeEntity">
+      select * from t_p_probe
+   </select>
 </mapper>

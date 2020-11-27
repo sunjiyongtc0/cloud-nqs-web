@@ -24,7 +24,7 @@ spring:
         server-addr: 121.37.141.206:8848
     sentinel:
       transport:
-        dashboard: 121.37.141.206:8080
+        dashboard: 127.0.0.1:8081
         port: 8720
 management:
   endpoints:
