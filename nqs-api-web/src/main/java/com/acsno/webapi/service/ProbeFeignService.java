@@ -16,4 +16,8 @@ public interface ProbeFeignService {
     @GetMapping("/probeInfo/getProbePage")
     Ret getProbePage(@RequestParam("currentPage") long currentPage , @RequestParam("pageSize") long pageSize );
 
+
+    @GetMapping("/packageInfo/getPackagePage")
+    Ret getPackagePage(@RequestParam("currentPage") long currentPage , @RequestParam("pageSize") long pageSize );
+
 }

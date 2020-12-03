@@ -22,6 +22,10 @@ spring:
     request-context-attribute: request
   mvc:
     static-path-pattern: /**
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 management:
   endpoints:
     web:

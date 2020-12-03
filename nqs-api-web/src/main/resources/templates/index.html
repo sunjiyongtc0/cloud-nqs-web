@@ -66,7 +66,7 @@
     }
 </style>
 <body>
-<div id="app">
+<div id="app"   style="width:99%;" >
     <input type="hidden" id="use" value="${username}">
     <el-container>
         <el-header>
@@ -89,8 +89,7 @@
                 <el-col :span="4"  align="right" style="vertical-align:middle;">
                     <h2>
                         <el-dropdown>
-                            <img  :src="src" class="user-avatar" >
-                            <span style=" vertical-align: middle; color: #fff;" >{{username}}</span>
+                            <span style=" vertical-align: middle; color: #fff;" ><img  :src="src" class="user-avatar"  >{{username}} </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item @click.native="jump(0)">个人信息</el-dropdown-item>
                                 <el-dropdown-item @click.native="jump(1)">退出登录</el-dropdown-item>
@@ -122,12 +121,12 @@
                                 <i class="el-icon-location"></i>
                                 <span>{{rc.resName}}</span>
                             </template>
-                            <el-submenu :index="rc.resId+'-'+rc.resUrl" >
-                                <template slot="title">{{rc.resName}}配置</template>
-                                <el-menu-item  v-for=" (c,i) in rc.children"  :key="c.id" :index="c.resUrl" >{{c.resName}}</el-menu-item>
-                            </el-submenu>
-
+                            <el-menu-item  v-for=" (c,i) in rc.children"  :key="c.id" :index="c.resUrl" >{{c.resName}}</el-menu-item>
                         </el-submenu>
+
+
+
+
                     </b>
 
                     <el-radio-group v-model="isCollapse" style="margin-bottom: 10px;">
@@ -138,7 +137,7 @@
             </div>
             <el-container>
                 <el-main>
-                    <section style="height: 85vh;">
+                    <section style="height: 80vh;">
                         <iframe scrolling="yes" frameborder="0" style="width:100%;min-height:100%;overflow:visible;background:#fff;" :src="index"></iframe>
                     </section>
                 </el-main>
@@ -199,6 +198,7 @@
                     this.flag=true;
                     var that=this;
                     that.resChild=that.res[key.split("-")[0]].children;
+                    that.index=that.resChild[0].resUrl;
                 }else{
                     this.flag=false;
                     this.index='home.html';

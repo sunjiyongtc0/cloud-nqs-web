@@ -23,62 +23,62 @@
     }
 </style>
 <body>
-<div id="mapp" style="height: 99%;width:99%;">
+<div id="mapp">
     <el-row  :gutter="20">
+        <el-col>
+            <el-button type="primary" icon="el-icon-plus" @click="addPackage()">新建</el-button>
+        </el-col>
         <el-table
-                :data="tableData.filter(data => !search || data.taskTypeName.toLowerCase().includes(search.toLowerCase()))"
+                :data="tableData.filter(data => !search || data.probeAlias.toLowerCase().includes(search.toLowerCase()))"
                 border
-                style="width: 100%"
-                max-height="450">
+                style="width: 100%">
             <el-table-column
                     fixed
-                    prop="taskTypeName"
-                    label="测试类型"
+                    prop="name"
+                    label="升级包名称"
                     width="100">
             </el-table-column>
             <el-table-column
-                    prop="taskParamName"
-                    label="任务名称"
-                    width="200"
-            >
-            </el-table-column>
-            <el-table-column
-                    prop="taskParamType"
-                    label="任务状态"
+                    prop="protocol"
+                    label="获取协议"
                     width="100"
-                    :formatter="formatter"
-            >
-            </el-table-column>
-            <el-table-column
-                    prop="paramJson"
-                    label="任务参数"
-                    width="100"
-            >
-            </el-table-column>
-            <el-table-column
-                    prop="runStatus"
-                    label="运行状态"
-                    width="200"
             >
             </el-table-column>
             <el-table-column
                     prop="createTime"
                     label="创建时间"
                     width="200"
-                    :formatter="dateformatter">
+                    :formatter="dateformatterTime">
             </el-table-column>
+            <el-table-column
+                    prop="createUser"
+                    label="创建用户"
+                    width="100"
+                    :formatter="formatter"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="filePath"
+                    label="获取URL"
+                    width="300"
+            >
+            </el-table-column>
+
             <el-table-column
                     align="right">
                 <template slot="header" slot-scope="scope">
                     <el-input
                             v-model="search"
                             size="mini"
-                            placeholder="输入任务类型关键字搜索"/>
+                            placeholder="升级包名称关键字搜索"/>
                 </template>
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)" disabled>查看详情</el-button>
+                            @click="handleEdit(scope.$index, scope.row)" disabled>修改</el-button>
+                    <el-button
+                            size="mini"
+                            @click="handleEdit(scope.$index, scope.row)" disabled>删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -93,6 +93,40 @@
                     :total="total">
             </el-pagination>
         </div>
+
+
+
+        <el-dialog title="新建升级包" :visible.sync="dialogFormVisible">
+            <el-form :model="package">
+                <el-form-item label="包名称" label-width="80px">
+                    <el-input v-model="package.name" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="主机IP" label-width="80px">
+                    <el-input v-model="package.ip" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="端口" label-width="80px">
+                    <el-input v-model="package.port" autocomplete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item label="获取协议" label-width="80px">
+                    <el-select v-model="package.protocol" placeholder="请选择协议">
+                        <el-option v-for=" s in protocolType " :label="s.text" :value="s.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                </el-form-item>
+                <el-form-item label="文件上传" label-width="80px">
+                <el-upload action="#" :http-request="handlePreview" :multiple="false" :limit="1" >
+                    <el-button size="small" type="primary">点击上传</el-button>
+                        <div slot="tip" class="el-upload__tip">只能上传5M一下的文件</div>
+                    </el-upload>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="onSubmit()">确 定</el-button>
+            </div>
+        </el-dialog>
+
     </el-row>
 </div>
 
@@ -111,7 +145,11 @@
             pageSizes:[20,50,100,200],
             pageSize:20,
             total:0,
-            currentPage:0
+            currentPage:0,
+            dialogFormVisible:false,
+            package:{},
+            protocolType:[{text:'http',value:'http'},{text:'ftp',value:'ftp'}],
+            uploadFile:{}
         },
         methods: {
             init(){    //初始化数据
@@ -130,7 +168,7 @@
                 var that=this;
                 $.ajax({
                     type: "GET",
-                    url: "/task/getTaskPage",
+                    url: "/probePackage/getPackagePage",
                     data:{"pageSize":that.pageSize,"currentPage":that.currentPage},
                     dataType: "json",
                     success: function (result) {
@@ -153,7 +191,7 @@
                 }
                 return value;
             },
-            dateformatter(row, column){
+            dateformatterTime(row, column){
                 var createTime = row.createTime;
                 return formatDate(createTime);
             },
@@ -166,7 +204,36 @@
                 var that=this;
                 that.currentPage=val;
                 that.initList();
+            },
+            addPackage(){
+                this.dialogFormVisible=true;
+            },
+            handlePreview(file) {
+                this.uploadFile = file.file;
+            },
+            async onSubmit(){
+                let that=this;
+                let package=that.package;
+                let fd = new FormData()
+                fd.append('file', that.uploadFile);
+                fd.append('package',JSON.stringify(package));
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                };
+                axios.post("/probePackage/uploadPackagePage", fd,config).then( res => {
+                    if (res.data.state=="ok") {
+                        that.dialogFormVisible=true;
+                        this.$notify.success({ title: "系统提示", message: res.data.msg });
+                    }else{
+                        this.$notify.error({ title: "系统提示", message: res.data.msg})
+                    }
+                }).catch( res => {
+                    this.$notify.error({ title: "系统提示", message: res })
+                })
             }
+
         },
         created(){
             this.init()
@@ -176,7 +243,7 @@
 
     //时间戳转换方法    date:时间戳数字
     function formatDate(date) {
-        var date = new Date(date);
+        var date = new Date(date*1000);
         var YY = date.getFullYear() + '-';
         var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
         var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
