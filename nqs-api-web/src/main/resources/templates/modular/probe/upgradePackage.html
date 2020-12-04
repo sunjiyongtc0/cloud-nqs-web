@@ -29,7 +29,7 @@
             <el-button type="primary" icon="el-icon-plus" @click="addPackage()">新建</el-button>
         </el-col>
         <el-table
-                :data="tableData.filter(data => !search || data.probeAlias.toLowerCase().includes(search.toLowerCase()))"
+                :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
                 border
                 style="width: 100%">
             <el-table-column
@@ -58,7 +58,7 @@
             >
             </el-table-column>
             <el-table-column
-                    prop="filePath"
+                    prop="url"
                     label="获取URL"
                     width="300"
             >
@@ -75,10 +75,10 @@
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)" disabled>修改</el-button>
+                            @click="handleEdit(scope.$index, scope.row)" >修改</el-button>
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)" disabled>删除</el-button>
+                            @click="handleDelete(scope.$index, scope.row)" disabled>删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -96,13 +96,13 @@
 
 
 
-        <el-dialog title="新建升级包" :visible.sync="dialogFormVisible">
+        <el-dialog :title="title" :visible.sync="dialogFormVisible">
             <el-form :model="package">
                 <el-form-item label="包名称" label-width="80px">
                     <el-input v-model="package.name" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="主机IP" label-width="80px">
-                    <el-input v-model="package.ip" autocomplete="off"></el-input>
+                    <el-input v-model="package.host" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="端口" label-width="80px">
                     <el-input v-model="package.port" autocomplete="off"></el-input>
@@ -149,22 +149,11 @@
             dialogFormVisible:false,
             package:{},
             protocolType:[{text:'http',value:'http'},{text:'ftp',value:'ftp'}],
-            uploadFile:{}
+            uploadFile:{},
+            title:"新建升级包"
         },
         methods: {
             init(){    //初始化数据
-                var that=this;
-                $.ajax({
-                    type: "GET",
-                    url: "/role/list",
-                    dataType: "json",
-                    success: function (result) {
-                        that.type=result.infos;
-                    }
-                });
-                that.initList();
-            },
-            initList(){
                 var that=this;
                 $.ajax({
                     type: "GET",
@@ -179,6 +168,22 @@
                         that.currentPage=result.infos.current;
                     }
                 });
+                that.initList();
+
+            },
+            initList(){
+                var that=this;
+                $.ajax({
+                    type: "GET",
+                    url: "/role/list",
+                    dataType: "json",
+                    success: function (result) {
+                        that.type=result.infos;
+                    }
+                });
+                that.package={};
+                that.title="新建升级包";
+                that.uploadFile={};
             },
             formatter(row, column){
                 var value="暂无角色";
@@ -207,6 +212,7 @@
             },
             addPackage(){
                 this.dialogFormVisible=true;
+                this.initList();
             },
             handlePreview(file) {
                 this.uploadFile = file.file;
@@ -215,23 +221,38 @@
                 let that=this;
                 let package=that.package;
                 let fd = new FormData()
-                fd.append('file', that.uploadFile);
                 fd.append('package',JSON.stringify(package));
                 let config = {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 };
-                axios.post("/probePackage/uploadPackagePage", fd,config).then( res => {
-                    if (res.data.state=="ok") {
-                        that.dialogFormVisible=true;
-                        this.$notify.success({ title: "系统提示", message: res.data.msg });
+                if(JSON.stringify(this.uploadFile)=="{}"&&package.id==null){
+                    this.$notify.error({ title: "系统提示", message: "请添加文件！！！" })
+                }else{
+                    if(JSON.stringify(this.uploadFile)=="{}"){
+                        fd.append('file', null);
                     }else{
-                        this.$notify.error({ title: "系统提示", message: res.data.msg})
+                        fd.append('file', that.uploadFile);
                     }
-                }).catch( res => {
-                    this.$notify.error({ title: "系统提示", message: res })
-                })
+                    axios.post("/probePackage/uploadPackagePage", fd,config).then( res => {
+                        if (res.data.state=="ok") {
+                            that.dialogFormVisible=false;
+                            this.$notify.success({ title: "系统提示", message: res.data.msg });
+                            that.init();
+                        }else{
+                            this.$notify.error({ title: "系统提示", message: res.data.msg})
+                        }
+                    }).catch( res => {
+                        this.$notify.error({ title: "系统提示", message: res })
+                    })
+                }
+
+            },
+            handleEdit(index, row){
+               this.package=row;
+               this.dialogFormVisible=true;
+               this.title="修改升级包";
             }
 
         },

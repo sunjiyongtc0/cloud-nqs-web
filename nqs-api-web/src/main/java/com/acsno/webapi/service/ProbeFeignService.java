@@ -4,6 +4,7 @@ import com.acsno.ext.kit.Ret;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
@@ -20,4 +21,7 @@ public interface ProbeFeignService {
     @GetMapping("/packageInfo/getPackagePage")
     Ret getPackagePage(@RequestParam("currentPage") long currentPage , @RequestParam("pageSize") long pageSize );
 
+
+    @PostMapping("/packageInfo/savePackagePage")
+    Ret savePackagePage(@RequestParam("data") String data );
 }
